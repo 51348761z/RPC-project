@@ -16,10 +16,12 @@ public class ClientProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+//        System.out.println("ClientProxy: invoke method: " + method.getName());
         RpcRequest request = RpcRequest.builder()
                 .interfaceName(method.getDeclaringClass().getName())
                 .methodName(method.getName())
-                .parameters(args).parameterTypes(method.getParameterTypes()).build();
+                .parameters(args)
+                .parameterTypes(method.getParameterTypes()).build();
         RpcResponse response = IOClient.sendRequest(host, port, request);
         return response.getData();
     }

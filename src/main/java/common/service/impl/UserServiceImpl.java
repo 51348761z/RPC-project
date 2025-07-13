@@ -14,7 +14,11 @@ public class UserServiceImpl implements UserService {
         Random random = new Random();
         // UUID.randomUUID() generates a random UUID which is globally unique
         // User.builder() creates a new User object with the Builder pattern of Lombok
-        User user = User.builder().username(UUID.randomUUID().toString()).id(id).sex(random.nextBoolean()).build();
+        User user = User.builder()
+                .username(UUID.randomUUID().toString())
+                .id(id)
+                .sex(random.nextBoolean())
+                .build();
         return user;
     }
     @Override

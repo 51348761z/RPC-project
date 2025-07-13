@@ -27,12 +27,14 @@ public class IOClient {
         try {
             Socket socket= new Socket(host, port);
             // Set up object streams for sending/receiving
+            // Note: ObjectOutputStream and ObjectInputStream are blocking I/O streams.
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
             // Write request, flush, and read response
             out.writeObject(request);
             out.flush();
+            // After writeObject() sends the request, readObject() will block and wait for the server response.
             RpcResponse response = (RpcResponse) in.readObject();
             return response;
         } catch (IOException | ClassNotFoundException e) {
