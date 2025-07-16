@@ -61,11 +61,11 @@ public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
             // The resolve method is called by ObjectDecoder when it needs to deserialize an object,
             // to find the Class object corresponding to a given class name string.
             @Override
-            public Class<?> resolve(String s) throws ClassNotFoundException {
-                // Uses Class.forName(s) to load the Class object for the specified class name.
+            public Class<?> resolve(String className) throws ClassNotFoundException {
+                // Uses Class.forName(className) to load the Class object for the specified class name.
                 // Note: This can be a potential security risk (e.g., deserialization vulnerabilities)
-                // if 's' can be controlled by a malicious client.
-                return Class.forName(s);
+                // if 'className' can be controlled by a malicious client.
+                return Class.forName(className);
             }
         }));
 

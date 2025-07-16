@@ -41,6 +41,7 @@ build/
 # Log files
 *.log
 logs/
+diff.txt
 
 # Compiled class files
 *.class

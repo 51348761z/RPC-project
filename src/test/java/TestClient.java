@@ -6,7 +6,7 @@ public class TestClient {
     public static void main(String[] args) {
         // Create a ClientProxy instance with target server address and port.
         // This holds the connection info for subsequent remote calls.
-        ClientProxy clientProxy = new ClientProxy("127.0.0.1", 9999);
+        ClientProxy clientProxy = new ClientProxy("127.0.0.1", 9999, ClientProxy.NETTY_RPC_CLIENT);
 
         // Use dynamic proxy to get an implementation of UserService.
         // All method calls on 'proxy' are intercepted and handled by ClientProxy.invoke().
