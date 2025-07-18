@@ -12,37 +12,30 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-@AllArgsConstructor
 public class ClientProxy implements InvocationHandler {
     private String host;
     private int port;
     private RpcClient rpcClient;
-    public static final int SIMPLE_RPC_CLIENT = 0;
-    public static final int NETTY_RPC_CLIENT = 1;
-    public ClientProxy(String host, int port, int choose) {
-        switch (choose) {
-            case SIMPLE_RPC_CLIENT: {
-                rpcClient = new SimpleSocketRpcClient(host, port);
-                break;
-            }
-            case NETTY_RPC_CLIENT: {
-                rpcClient = new NettyRpcClient(host, port);
-            }
-        }
+    public ClientProxy(String host, int port) {
+        throw new UnsupportedOperationException("This constructor should not be used directly.");
     }
-    public ClientProxy (String host, int port) {
-        rpcClient = new NettyRpcClient(host, port);
+    public ClientProxy(String host, int port, RpcClient rpcClient) {
+        this.host = host;
+        this.port = port;
+        this.rpcClient = rpcClient;
+        System.out.println("Proxy initialized for  host: " + this.host + ", port: " + this.port + ", using client: " + rpcClient.getClass().getName());
     }
-
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-//        System.out.println("ClientProxy: invoke method: " + method.getName());
+        System.out.println("Invoking method: " + method.getName());
         RpcRequest request = RpcRequest.builder()
                 .interfaceName(method.getDeclaringClass().getName())
                 .methodName(method.getName())
                 .parameters(args)
                 .parameterTypes(method.getParameterTypes()).build();
-        RpcResponse response = IOClient.sendRequest(host, port, request);
+        System.out.println("Sending RPC request to " + host + ":" + port + " for method " + request.getMethodName());
+        RpcResponse response = rpcClient.sendRequest(request);
+        System.out.println("Received RPC response data: " + response.getData());
         return response.getData();
     }
     public <T>T getProxy(Class<T> clazz) {
