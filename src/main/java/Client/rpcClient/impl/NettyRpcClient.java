@@ -2,6 +2,8 @@ package Client.rpcClient.impl;
 
 import Client.netty.nettyInitializer.NettyClientInitializer;
 import Client.rpcClient.RpcClient;
+import Client.serviceCenter.ServiceCenter;
+import Client.serviceCenter.ZookeeperServiceCenter;
 import common.message.RpcRequest;
 import common.message.RpcResponse;
 import io.netty.bootstrap.Bootstrap;
@@ -17,6 +19,11 @@ public class NettyRpcClient implements RpcClient {
     private final int port;
     private static final Bootstrap bootstrap;
     private static final EventLoopGroup eventLoopGroup;
+    private ServiceCenter serviceCenter;
+
+    public NettyRpcClient() {
+        this.serviceCenter = new ZookeeperServiceCenter();
+    }
     public NettyRpcClient(String host, int port) {
         this.host = host;
         this.port = port;

@@ -1,6 +1,7 @@
 package Client.proxy;
 
 import Client.rpcClient.RpcClient;
+import Client.rpcClient.impl.NettyRpcClient;
 import common.message.RpcRequest;
 import common.message.RpcResponse;
 
@@ -12,6 +13,10 @@ public class ClientProxy implements InvocationHandler {
     private String host;
     private int port;
     private RpcClient rpcClient;
+
+    public ClientProxy() {
+        rpcClient = new NettyRpcClient();
+    }
     public ClientProxy(String host, int port) {
         throw new UnsupportedOperationException("This constructor should not be used directly.");
     }

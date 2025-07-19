@@ -9,7 +9,8 @@ public class TestClient {
         RpcClient rpcClient = RpcClientFactory.createRpcClient();
         String host = RpcClientFactory.getRpcServerHost();
         int port = RpcClientFactory.getRpcServerPort();
-        ClientProxy clientProxy = new ClientProxy(host, port, rpcClient);
+//        ClientProxy clientProxy = new ClientProxy(host, port, rpcClient);
+        ClientProxy clientProxy = new ClientProxy();
         UserService userServiceNetty = clientProxy.getProxy(UserService.class);
 
         User user = userServiceNetty.getUserById(1);
