@@ -9,8 +9,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class RpcClientFactory {
-    private static String CONFIG_FILE = "config.properties";
-    private static Properties PROPERTIES = new Properties();
+    private static final String CONFIG_FILE = "config.properties";
+    private static final Properties PROPERTIES = new Properties();
     static {
         try (InputStream input = RpcClientFactory.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
             if (input == null) {
@@ -29,7 +29,7 @@ public class RpcClientFactory {
         int port = Integer.parseInt(PROPERTIES.getProperty("rpc.server.port", "9999"));
         return switch (clientType) {
             case "netty" -> {
-                System.out.println("Creating Netty RPC Client for ");
+                System.out.println("Creating Netty RPC Client for " + host + ":" + port);
                 yield new NettyRpcClient(host, port);
                 }
             case "simplesoket" -> {

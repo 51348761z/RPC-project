@@ -13,8 +13,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
 
 public class NettyRpcClient implements RpcClient {
-    private String host;
-    private int port;
+    private final String host;
+    private final int port;
     private static final Bootstrap bootstrap;
     private static final EventLoopGroup eventLoopGroup;
     public NettyRpcClient(String host, int port) {
