@@ -22,11 +22,12 @@ public class NettyRpcClient implements RpcClient {
     private ServiceCenter serviceCenter;
 
     public NettyRpcClient() {
-        this.serviceCenter = new ZookeeperServiceCenter();
+        this("127.0.0.1", 9999);
     }
     public NettyRpcClient(String host, int port) {
         this.host = host;
         this.port = port;
+        this.serviceCenter = new ZookeeperServiceCenter();
     }
     static {
         eventLoopGroup = new NioEventLoopGroup();
