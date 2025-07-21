@@ -11,6 +11,7 @@ public class RpcResponse implements Serializable {
     // state information
     private int code;
     private String message;
+    private Class<?> dataType;
     // concrete data
     private Object data;
     // success information
