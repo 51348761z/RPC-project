@@ -10,21 +10,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class ClientProxy implements InvocationHandler {
-    private String host;
-    private int port;
     private RpcClient rpcClient;
 
     public ClientProxy() {
         rpcClient = new NettyRpcClient();
     }
-    public ClientProxy(String host, int port) {
-        throw new UnsupportedOperationException("This constructor should not be used directly.");
-    }
-    public ClientProxy(String host, int port, RpcClient rpcClient) {
-        this.host = host;
-        this.port = port;
+    public ClientProxy(RpcClient rpcClient) {
         this.rpcClient = rpcClient;
-        System.out.println("Proxy initialized for  host: " + this.host + ", port: " + this.port + ", using client: " + rpcClient.getClass().getName());
+        System.out.println("Proxy initialized using client: " + rpcClient.getClass().getName());
     }
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -34,7 +27,7 @@ public class ClientProxy implements InvocationHandler {
                 .methodName(method.getName())
                 .parameters(args)
                 .parameterTypes(method.getParameterTypes()).build();
-        System.out.println("Sending RPC request to " + host + ":" + port + " for method " + request.getMethodName());
+        System.out.println("Sending RPC request for method " + request.getMethodName());
         RpcResponse response = rpcClient.sendRequest(request);
         System.out.println("Received RPC response data: " + response.getData());
         return response.getData();

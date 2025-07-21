@@ -6,10 +6,6 @@ import common.service.UserService;
 
 public class TestClient {
     public static void main(String[] args) {
-        RpcClient rpcClient = RpcClientFactory.createRpcClient();
-        String host = RpcClientFactory.getRpcServerHost();
-        int port = RpcClientFactory.getRpcServerPort();
-//        ClientProxy clientProxy = new ClientProxy(host, port, rpcClient);
         ClientProxy clientProxy = new ClientProxy();
         UserService userServiceNetty = clientProxy.getProxy(UserService.class);
 

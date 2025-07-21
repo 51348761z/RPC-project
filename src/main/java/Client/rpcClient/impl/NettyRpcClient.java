@@ -14,19 +14,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
 
+import java.net.InetSocketAddress;
+
 public class NettyRpcClient implements RpcClient {
-    private final String host;
-    private final int port;
     private static final Bootstrap bootstrap;
     private static final EventLoopGroup eventLoopGroup;
     private ServiceCenter serviceCenter;
 
     public NettyRpcClient() {
-        this("127.0.0.1", 9999);
-    }
-    public NettyRpcClient(String host, int port) {
-        this.host = host;
-        this.port = port;
         this.serviceCenter = new ZookeeperServiceCenter();
     }
     static {
@@ -36,6 +31,10 @@ public class NettyRpcClient implements RpcClient {
     }
     @Override
     public RpcResponse sendRequest(RpcRequest request) {
+        // get the service address from the service center
+        InetSocketAddress address = serviceCenter.serviceDiscovery(request.getInterfaceName());
+        String host = address.getHostName();
+        int port = address.getPort();
         try {
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             Channel channel = channelFuture.channel();

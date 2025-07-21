@@ -30,7 +30,7 @@ public class RpcClientFactory {
         return switch (clientType) {
             case "netty" -> {
                 System.out.println("Creating Netty RPC Client for " + host + ":" + port);
-                yield new NettyRpcClient(host, port);
+                yield new NettyRpcClient();
                 }
             case "simplesoket" -> {
                 System.out.println("Creating Simple Soket RPC Client for " + host + ":" + port);
