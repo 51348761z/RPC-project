@@ -9,13 +9,13 @@ import java.util.Map;
 
 public class ServiceProvider {
     private Map<String, Object> interfaceProvider;
-    public ServiceProvider() {
-        this.interfaceProvider = new HashMap<>();
-    }
     private String host;
     private int port;
     private ServiceRegister serviceRegister;
 
+    public ServiceProvider() {
+        this("127.0.0.1", 9999);
+    }
     public ServiceProvider(String host, int port) {
         this.host = host;
         this.port = port;
