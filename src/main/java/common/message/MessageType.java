@@ -18,5 +18,6 @@ public enum MessageType {
                 return messageType;
             }
         }
+        return null;
     }
 }

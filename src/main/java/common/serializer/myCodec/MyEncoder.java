@@ -7,7 +7,9 @@ import common.serializer.mySerializer.Serializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class MyEncoder extends MessageToByteEncoder {
     private Serializer serializer;
     @Override
