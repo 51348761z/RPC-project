@@ -36,7 +36,7 @@ public class ObjectSerializer implements Serializer {
     }
 
     @Override
-    public int getType() {
-        return OBJECT_SERIALIZER;
+    public SerializerType getType() {
+        return SerializerType.OBJECT_SERIALIZER;
     }
 }

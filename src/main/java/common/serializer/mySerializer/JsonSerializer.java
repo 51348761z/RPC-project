@@ -1,6 +1,5 @@
 package common.serializer.mySerializer;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import common.message.RpcRequest;
 import common.message.RpcResponse;
@@ -46,7 +45,7 @@ public class JsonSerializer implements Serializer {
     }
 
     @Override
-    public int getType() {
-        return JSON_SERIALIZER;
+    public SerializerType getType() {
+        return SerializerType.JSON_SERIALIZER;
     }
 }
