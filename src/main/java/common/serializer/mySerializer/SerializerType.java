@@ -11,4 +11,12 @@ public enum SerializerType {
     SerializerType(int value) {
         this.value = value;
     }
+    public static SerializerType fromValue(int value) {
+        for (SerializerType type : values()) {
+            if (type.getValue() == value) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown serializer type: " + value);
+    }
 }
