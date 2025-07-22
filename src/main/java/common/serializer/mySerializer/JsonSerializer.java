@@ -1,6 +1,7 @@
 package common.serializer.mySerializer;
 
 import com.alibaba.fastjson.JSONObject;
+import common.message.MessageType;
 import common.message.RpcRequest;
 import common.message.RpcResponse;
 
@@ -12,10 +13,10 @@ public class JsonSerializer implements Serializer {
     }
 
     @Override
-    public Object deserialize(byte[] bytes, int messageType) {
+    public Object deserialize(byte[] bytes, MessageType messageType) {
         Object object = null;
         switch (messageType) {
-            case 0:
+            case RPC_REQUEST:
                 RpcRequest request = JSONObject.parseObject(bytes, RpcRequest.class);
                 Object[] objects = new Object[request.getParameterTypes().length];
                 for (int i = 0; i < objects.length; i++) {
@@ -29,7 +30,7 @@ public class JsonSerializer implements Serializer {
                 request.setParameters(objects);
                 object = request;
                 break;
-            case 1:
+            case RPC_RESPONSE:
                 RpcResponse response = JSONObject.parseObject(bytes, RpcResponse.class);
                 Class<?> dataType = response.getDataType();
                 if (!dataType.isAssignableFrom(response.getData().getClass())) {

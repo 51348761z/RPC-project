@@ -1,5 +1,7 @@
 package common.serializer.mySerializer;
 
+import common.message.MessageType;
+
 import java.io.*;
 
 public class ObjectSerializer implements Serializer {
@@ -21,7 +23,7 @@ public class ObjectSerializer implements Serializer {
     }
 
     @Override
-    public Object deserialize(byte[] bytes, int messageType) {
+    public Object deserialize(byte[] bytes, MessageType messageType) {
         Object object = null;
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         try {

@@ -1,8 +1,10 @@
 package common.serializer.mySerializer;
 
+import common.message.MessageType;
+
 public interface Serializer {
     byte[] serialize(Object object);
-    Object deserialize(byte[] bytes, int messageType);
+    Object deserialize(byte[] bytes, MessageType messageType);
     SerializerType getType();
 
     static Serializer createSerializer(SerializerType type) {
