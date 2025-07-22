@@ -2,7 +2,7 @@ package common.serializer.mySerializer;
 
 public interface Serializer {
     // serialize an object to a byte array
-    byte[] serilize(Object object);
+    byte[] serialize(Object object);
     public static final int OBJECT_SERIALIZER = 0;
     public static final int JSON_SERIALIZER = 1;
 
