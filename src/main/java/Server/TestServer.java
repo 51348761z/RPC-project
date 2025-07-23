@@ -6,13 +6,13 @@ import common.service.impl.UserServiceImpl;
 
 public class TestServer {
     public static void main(String[] args) {
+        String host = RpcServerFactory.getServerHost();
+        int port = RpcServerFactory.getServerPort();
         UserService userService = new UserServiceImpl();
-        ServiceProvider serviceProvider = new ServiceProvider("127.0.0.1", 9999);
+        ServiceProvider serviceProvider = new ServiceProvider(host, port);
         serviceProvider.provideServiceInterface(userService);
 
         RpcServer rpcServer = RpcServerFactory.createRpcServer(serviceProvider);
-        var port = RpcServerFactory.getServerPort();
-        System.out.println("Server started on port " + port);
         rpcServer.start(port);
     }
 }

@@ -40,5 +40,8 @@ public class RpcServerFactory {
     public static int getServerPort() {
         return Integer.parseInt(PROPERTIES.getProperty("rpc.server.port", "9999"));
     }
+    public static String getServerHost() {
+        return PROPERTIES.getProperty("rpc.server.host", "127.0.0.1");
+    }
 }
 
