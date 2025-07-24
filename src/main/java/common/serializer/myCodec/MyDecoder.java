@@ -12,8 +12,10 @@ import java.util.List;
 public class MyDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        System.out.println("MyDecoder called......");
+//        System.out.println("MyDecoder decode method called " + in.readableBytes());
         short messageType = in.readShort();
-        if (messageType != MessageType.RPC_REQUEST.getType() && messageType != MessageType.RPC_RESPONSE.getType()) {
+        if (messageType != MessageType.RPC_REQUEST.getCode() && messageType != MessageType.RPC_RESPONSE.getCode()) {
             System.out.println("Unsupported message type: " + messageType);
         }
         short serializerType = in.readShort();

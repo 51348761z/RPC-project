@@ -6,14 +6,14 @@ import lombok.Getter;
 public enum SerializerType {
     OBJECT_SERIALIZER(0), JSON_SERIALIZER(1);
 
-    private final int value;
+    private final int code;
 
-    SerializerType(int value) {
-        this.value = value;
+    SerializerType(int code) {
+        this.code = code;
     }
     public static SerializerType fromValue(int value) {
         for (SerializerType type : values()) {
-            if (type.getValue() == value) {
+            if (type.getCode() == value) {
                 return type;
             }
         }

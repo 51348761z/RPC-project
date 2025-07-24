@@ -16,11 +16,11 @@ public class MyEncoder extends MessageToByteEncoder {
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         System.out.println("MyEncoder encode method called" + msg.getClass().getName());
         if (msg instanceof RpcRequest) {
-            out.writeShort(MessageType.RPC_REQUEST.getType());
+            out.writeShort(MessageType.RPC_REQUEST.getCode());
         } else if (msg instanceof RpcResponse) {
-            out.writeShort(MessageType.RPC_RESPONSE.getType());
+            out.writeShort(MessageType.RPC_RESPONSE.getCode());
         }
-        out.writeShort(serializer.getType().getValue());
+        out.writeShort(serializer.getCode());
         byte[] serializedBytes = serializer.serialize(msg);
         out.writeInt(serializedBytes.length);
         out.writeBytes(serializedBytes);

@@ -1,20 +1,17 @@
 package common.message;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
 public enum MessageType {
     RPC_REQUEST(0), RPC_RESPONSE(1);
-    private final int type;
-
-    MessageType(int type) {
-        this.type = type;
-    }
+    private final int code;
 
     public static MessageType fromValue(int value) {
         for (MessageType messageType : values()) {
-            if (messageType.getType() == value) {
+            if (messageType.getCode() == value) {
                 return messageType;
             }
         }

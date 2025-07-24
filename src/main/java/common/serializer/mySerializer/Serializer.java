@@ -5,7 +5,7 @@ import common.message.MessageType;
 public interface Serializer {
     byte[] serialize(Object object);
     Object deserialize(byte[] bytes, MessageType messageType);
-    SerializerType getType();
+    int getCode();
 
     static Serializer createSerializer(SerializerType type) {
         return switch (type) {

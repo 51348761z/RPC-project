@@ -21,7 +21,7 @@ public class JsonSerializer implements Serializer {
                 Object[] objects = new Object[request.getParameterTypes().length];
                 for (int i = 0; i < objects.length; i++) {
                     Class<?> paramsType = request.getParameterTypes()[i];
-                    if (!paramsType.isAssignableFrom((request.getParameters()[i].getClass()))) {
+                    if (!paramsType.isAssignableFrom(request.getParameters()[i].getClass())) {
                         objects[i] = JSONObject.toJavaObject((JSONObject) request.getParameters()[i], request.getParameterTypes()[i]);
                     } else {
                         objects[i] = request.getParameters()[i];
@@ -33,6 +33,10 @@ public class JsonSerializer implements Serializer {
             case RPC_RESPONSE:
                 RpcResponse response = JSONObject.parseObject(bytes, RpcResponse.class);
                 Class<?> dataType = response.getDataType();
+                if (dataType == null) {
+                    System.out.println("Data type is null, defaulting to Object");
+                    dataType = Object.class; // Default to Object if no data type is specified
+                }
                 if (!dataType.isAssignableFrom(response.getData().getClass())) {
                     response.setData(JSONObject.toJavaObject((JSONObject) response.getData(), dataType));
                 }
@@ -46,7 +50,7 @@ public class JsonSerializer implements Serializer {
     }
 
     @Override
-    public SerializerType getType() {
-        return SerializerType.JSON_SERIALIZER;
+    public int getCode() {
+        return SerializerType.JSON_SERIALIZER.getCode();
     }
 }

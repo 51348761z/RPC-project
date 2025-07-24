@@ -13,6 +13,7 @@ public class TestServer {
         serviceProvider.provideServiceInterface(userService);
 
         RpcServer rpcServer = RpcServerFactory.createRpcServer(serviceProvider);
+        System.out.println("Server is starting on " + host + ":" + port);
         rpcServer.start(port);
     }
 }

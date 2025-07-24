@@ -28,9 +28,14 @@ public class ZookeeperServiceCenter implements ServiceCenter {
     public InetSocketAddress serviceDiscovery(String serviceName) {
         try {
             List<String> strings = client.getChildren().forPath("/" + serviceName);
+            if (strings.isEmpty()) {
+                System.out.println("No service found for: " + serviceName);
+                return null;
+            }
             String string = strings.get(0);
             return parseAddress(string);
         } catch (Exception e) {
+            System.out.println("Error during service discovery for: " + serviceName);
             e.printStackTrace();
         }
         return null;
