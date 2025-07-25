@@ -1,5 +1,7 @@
 package Client.serviceCenter;
 
+import Client.cache.ServiceCache;
+import Client.serviceCenter.zkWatcher.ZookeeperWatch;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -11,8 +13,9 @@ import java.util.List;
 public class ZookeeperServiceCenter implements ServiceCenter {
     private CuratorFramework client;
     private static final String ROOT_PATH = "MyRpc";
+    private ServiceCache serviceCache;
 
-    public ZookeeperServiceCenter() {
+    public ZookeeperServiceCenter() throws InterruptedException {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         this.client = CuratorFrameworkFactory.builder()
                 .connectString("127.0.0.1:2181")
@@ -22,17 +25,26 @@ public class ZookeeperServiceCenter implements ServiceCenter {
                 .build();
         this.client.start();
         System.out.println("Successfully connected to zookeeper!");
+
+        // Initialize the service cache
+        this.serviceCache = new ServiceCache();
+        ZookeeperWatch watcher = new ZookeeperWatch(client, serviceCache);
+        watcher.initWatchService();
     }
 
     @Override
     public InetSocketAddress serviceDiscovery(String serviceName) {
         try {
-            List<String> strings = client.getChildren().forPath("/" + serviceName);
-            if (strings.isEmpty()) {
+            // Check if the service is cached
+            List<String> serviceAddresses = serviceCache.getServiceAddressesFromCache(serviceName);
+            if (serviceAddresses == null) {
+                serviceAddresses = client.getChildren().forPath("/" + serviceName);
+            }
+            if (serviceAddresses.isEmpty()) {
                 System.out.println("No service found for: " + serviceName);
                 return null;
             }
-            String string = strings.get(0);
+            String string = serviceAddresses.get(0);
             return parseAddress(string);
         } catch (Exception e) {
             System.out.println("Error during service discovery for: " + serviceName);
