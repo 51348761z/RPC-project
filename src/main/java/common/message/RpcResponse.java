@@ -20,7 +20,7 @@ public class RpcResponse implements Serializable {
     private Object data;
     // success information
     public static RpcResponse success(Object data) {
-        return RpcResponse.builder().code(200).data(data).build();
+        return RpcResponse.builder().code(200).data(data).dataType(data.getClass()).build();
     }
     // error information
     public static RpcResponse fail() {
