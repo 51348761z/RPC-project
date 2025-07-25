@@ -33,6 +33,7 @@ public class ZookeeperServiceRegister implements ServiceRegister {
             }
             String path = "/" + serviceName + "/" + getServiceAddress(serviceAddress);
             client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path);
+            System.out.println("Successfully register service " + serviceName);
         } catch (Exception e) {
             System.out.println("This service is already register!");
         }

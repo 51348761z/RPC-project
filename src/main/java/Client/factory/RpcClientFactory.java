@@ -23,7 +23,7 @@ public class RpcClientFactory {
         }
     }
 
-    public static RpcClient createRpcClient() {
+    public static RpcClient createRpcClient() throws InterruptedException {
         String clientType = PROPERTIES.getProperty("rpc.client.type", "netty").toLowerCase();
         String host = PROPERTIES.getProperty("rpc.server.host", "127.0.0.1");
         int port = Integer.parseInt(PROPERTIES.getProperty("rpc.server.port", "9999"));
