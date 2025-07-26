@@ -24,6 +24,9 @@ public class NettyRpcClient implements RpcClient {
     public NettyRpcClient() throws InterruptedException {
         this.serviceCenter = new ZookeeperServiceCenter();
     }
+    public NettyRpcClient(ServiceCenter serviceCenter) throws InterruptedException {
+        this.serviceCenter = serviceCenter;
+    }
     static {
         eventLoopGroup = new NioEventLoopGroup();
         bootstrap = new Bootstrap();

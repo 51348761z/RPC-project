@@ -1,6 +1,9 @@
 package Client.serviceCenter;
 
 import Client.cache.ServiceCache;
+import Client.serviceCenter.loadBalance.impl.ConsistenctyHashBalance;
+import Client.serviceCenter.loadBalance.impl.RandomLoadBalance;
+import Client.serviceCenter.loadBalance.impl.RoundLoadBalance;
 import Client.serviceCenter.zkWatcher.ZookeeperWatch;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -13,6 +16,7 @@ import java.util.List;
 public class ZookeeperServiceCenter implements ServiceCenter {
     private CuratorFramework client;
     private static final String ROOT_PATH = "MyRpc";
+    private static final String RETRY = "CanRetry";
     private ServiceCache serviceCache;
 
     public ZookeeperServiceCenter() throws InterruptedException {
@@ -44,13 +48,30 @@ public class ZookeeperServiceCenter implements ServiceCenter {
                 System.out.println("No service found for: " + serviceName);
                 return null;
             }
-            String string = serviceAddresses.get(0);
-            return parseAddress(string);
+            String address = new ConsistenctyHashBalance().balanceStrategy(serviceAddresses);
+            return parseAddress(address);
         } catch (Exception e) {
             System.out.println("Error during service discovery for: " + serviceName);
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean checkRetry(String serviceName) {
+        boolean canRetry = false;
+        try {
+            List<String> serviceList = client.getChildren().forPath("/" + RETRY);
+            for (String service : serviceList) {
+                if (service.equals(serviceName)) {
+                    System.out.println("Service " + serviceName + " is marked for retry whitelist, proceeding with retry.");
+                    canRetry = true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return canRetry;
     }
 
     private String getServiceAddress(InetSocketAddress serverAddress) {

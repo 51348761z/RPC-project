@@ -23,12 +23,12 @@ public class ServiceProvider {
         this.serviceRegister = new ZookeeperServiceRegister();
     }
 
-    public void provideServiceInterface(Object service) {
+    public void provideServiceInterface(Object service, boolean canRetry) {
         String serviceName = service.getClass().getName();
         Class<?>[] interfaceNames = service.getClass().getInterfaces();
         for (Class<?> interfaceName : interfaceNames) {
             interfaceProvider.put(interfaceName.getName(), service);
-            serviceRegister.register(interfaceName.getName(), new InetSocketAddress(host, port));
+            serviceRegister.register(interfaceName.getName(), new InetSocketAddress(host, port), canRetry);
         }
     }
 
