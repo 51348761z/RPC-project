@@ -2,6 +2,9 @@ package Client.proxy;
 
 import Client.rpcClient.RpcClient;
 import Client.rpcClient.impl.NettyRpcClient;
+import Client.serviceCenter.ServiceCenter;
+import Client.serviceCenter.ZookeeperServiceCenter;
+import Client.retry.guavaRetry;
 import common.message.RpcRequest;
 import common.message.RpcResponse;
 
@@ -11,9 +14,11 @@ import java.lang.reflect.Proxy;
 
 public class ClientProxy implements InvocationHandler {
     private RpcClient rpcClient;
+    private ServiceCenter serviceCenter;
 
     public ClientProxy() throws InterruptedException {
-        rpcClient = new NettyRpcClient();
+        serviceCenter = new ZookeeperServiceCenter();
+        rpcClient = new NettyRpcClient(serviceCenter);
     }
     public ClientProxy(RpcClient rpcClient) {
         this.rpcClient = rpcClient;
@@ -28,7 +33,12 @@ public class ClientProxy implements InvocationHandler {
                 .parameters(args)
                 .parameterTypes(method.getParameterTypes()).build();
         System.out.println("Sending RPC request for method " + request.getMethodName());
-        RpcResponse response = rpcClient.sendRequest(request);
+        RpcResponse response;
+        if (serviceCenter.checkRetry(request.getInterfaceName())) {
+            response = new guavaRetry().sendServiceWithRetry(request, rpcClient);
+        } else {
+            response = rpcClient.sendRequest(request);
+        }
         System.out.println("Received RPC response data: " + response.getData());
         return response.getData();
     }

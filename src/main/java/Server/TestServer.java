@@ -10,7 +10,7 @@ public class TestServer {
         int port = RpcServerFactory.getServerPort();
         UserService userService = new UserServiceImpl();
         ServiceProvider serviceProvider = new ServiceProvider(host, port);
-        serviceProvider.provideServiceInterface(userService);
+        serviceProvider.provideServiceInterface(userService, true);
 
         RpcServer rpcServer = RpcServerFactory.createRpcServer(serviceProvider);
         System.out.println("Server is starting on " + host + ":" + port);

@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 public class ZookeeperServiceRegister implements ServiceRegister {
     private CuratorFramework client;
     private static final String ROOT_PATH = "MyRpc";
+    private static final String RETRY = "CanRetry";
 
     public ZookeeperServiceRegister() {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
@@ -26,13 +27,17 @@ public class ZookeeperServiceRegister implements ServiceRegister {
     }
 
     @Override
-    public void register(String serviceName, InetSocketAddress serviceAddress) {
+    public void register(String serviceName, InetSocketAddress serviceAddress, boolean canRetry) {
         try {
             if (client.checkExists().forPath("/" + serviceName) == null) {
                 client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/" + serviceName);
             }
             String path = "/" + serviceName + "/" + getServiceAddress(serviceAddress);
             client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path);
+            if (canRetry) {
+                path = "/" + RETRY + "/" + serviceName;
+                client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path);
+            }
             System.out.println("Successfully register service " + serviceName);
         } catch (Exception e) {
             System.out.println("This service is already register!");

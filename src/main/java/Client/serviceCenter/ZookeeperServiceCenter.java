@@ -16,6 +16,7 @@ import java.util.List;
 public class ZookeeperServiceCenter implements ServiceCenter {
     private CuratorFramework client;
     private static final String ROOT_PATH = "MyRpc";
+    private static final String RETRY = "CanRetry";
     private ServiceCache serviceCache;
 
     public ZookeeperServiceCenter() throws InterruptedException {
@@ -54,6 +55,23 @@ public class ZookeeperServiceCenter implements ServiceCenter {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean checkRetry(String serviceName) {
+        boolean canRetry = false;
+        try {
+            List<String> serviceList = client.getChildren().forPath("/" + RETRY);
+            for (String service : serviceList) {
+                if (service.equals(serviceName)) {
+                    System.out.println("Service " + serviceName + " is marked for retry whitelist, proceeding with retry.");
+                    canRetry = true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return canRetry;
     }
 
     private String getServiceAddress(InetSocketAddress serverAddress) {
