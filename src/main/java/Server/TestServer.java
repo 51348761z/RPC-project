@@ -1,3 +1,4 @@
+import Server.factory.RetryConfig;
 import Server.provider.ServiceProvider;
 import Server.server.RpcServer;
 import Server.factory.RpcServerFactory;
@@ -10,7 +11,8 @@ public class TestServer {
         int port = RpcServerFactory.getServerPort();
         UserService userService = new UserServiceImpl();
         ServiceProvider serviceProvider = new ServiceProvider(host, port);
-        serviceProvider.provideServiceInterface(userService, true);
+        boolean retryEnabled = RetryConfig.isRetryEnabled(UserService.class.getName());
+        serviceProvider.provideServiceInterface(userService, retryEnabled);
 
         RpcServer rpcServer = RpcServerFactory.createRpcServer(serviceProvider);
         System.out.println("Server is starting on " + host + ":" + port);
