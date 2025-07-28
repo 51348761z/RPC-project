@@ -1,6 +1,7 @@
 package Server.netty.handler;
 
 import Server.provider.ServiceProvider;
+import Server.rateLimit.RateLimit;
 import common.message.RpcRequest;
 import common.message.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,6 +29,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     private RpcResponse getResponse(RpcRequest rpcRequest) {
         String interfaceName = rpcRequest.getInterfaceName();
+        // Check if the rate limit allows the request
+        RateLimit rateLimit = serviceProvider.getRateLimitProvider().getRateLimit(interfaceName);
+        if (!rateLimit.getToken()) {
+            System.out.println("Rate limit exceeded for interface: " + interfaceName);
+            return RpcResponse.fail();
+        }
+
         Object service = serviceProvider.getService(interfaceName);
         Method method = null;
         try {
