@@ -34,6 +34,7 @@ public class NettyRpcClient implements RpcClient {
     }
     @Override
     public RpcResponse sendRequest(RpcRequest request) {
+        System.out.println("Sending RPC request: " + request + Thread.currentThread().getStackTrace()[2].getMethodName());
         // get the service address from the service center
         InetSocketAddress address = serviceCenter.serviceDiscovery(request.getInterfaceName());
         String host = address.getHostName();

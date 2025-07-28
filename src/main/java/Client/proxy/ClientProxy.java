@@ -1,5 +1,7 @@
 package Client.proxy;
 
+import Client.circuitBreaker.CircuitBreaker;
+import Client.circuitBreaker.CircuitBreakerProvider;
 import Client.rpcClient.RpcClient;
 import Client.rpcClient.impl.NettyRpcClient;
 import Client.serviceCenter.ServiceCenter;
@@ -15,10 +17,12 @@ import java.lang.reflect.Proxy;
 public class ClientProxy implements InvocationHandler {
     private RpcClient rpcClient;
     private ServiceCenter serviceCenter;
+    private CircuitBreakerProvider circuitBreakerProvider;
 
     public ClientProxy() throws InterruptedException {
         serviceCenter = new ZookeeperServiceCenter();
         rpcClient = new NettyRpcClient(serviceCenter);
+        circuitBreakerProvider = new CircuitBreakerProvider();
     }
     public ClientProxy(RpcClient rpcClient) {
         this.rpcClient = rpcClient;
@@ -33,6 +37,14 @@ public class ClientProxy implements InvocationHandler {
                 .parameters(args)
                 .parameterTypes(method.getParameterTypes()).build();
         System.out.println("Sending RPC request for method " + request.getMethodName());
+
+        // Check if circuit breaker is open for the service
+        CircuitBreaker circuitBreaker = circuitBreakerProvider.getCircuitBreaker(method.getName());
+        if (!circuitBreaker.allowRequest()) {
+            System.out.println("Circuit breaker is open for method: " + method.getName());
+            return null;
+        }
+
         RpcResponse response;
         if (serviceCenter.checkRetry(request.getInterfaceName())) {
             response = new guavaRetry().sendServiceWithRetry(request, rpcClient);
