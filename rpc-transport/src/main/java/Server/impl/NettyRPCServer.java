@@ -1,4 +1,4 @@
-package Server.server.impl;
+package Server.impl;
 
 import Server.netty.neetyInitializer.NettyServerInitializer;
 import Server.provider.ServiceProvider;

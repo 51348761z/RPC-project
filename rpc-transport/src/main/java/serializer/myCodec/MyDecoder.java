@@ -1,8 +1,8 @@
-package common.serializer.myCodec;
+package serializer.myCodec;
 
 import common.message.MessageType;
-import common.serializer.mySerializer.Serializer;
-import common.serializer.mySerializer.SerializerType;
+import serializer.mySerializer.Serializer;
+import serializer.mySerializer.SerializerType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;

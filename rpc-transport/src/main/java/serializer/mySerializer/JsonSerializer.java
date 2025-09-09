@@ -1,4 +1,4 @@
-package common.serializer.mySerializer;
+package serializer.mySerializer;
 
 import com.alibaba.fastjson.JSONObject;
 import common.message.MessageType;

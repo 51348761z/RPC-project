@@ -1,8 +1,8 @@
-package Server.server.impl;
+package Server.impl;
 
 import Server.provider.ServiceProvider;
 import Server.server.RpcServer;
-import Server.server.work.WorkThread;
+import Server.work.WorkThread;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;

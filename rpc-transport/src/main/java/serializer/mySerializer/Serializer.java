@@ -1,4 +1,4 @@
-package common.serializer.mySerializer;
+package serializer.mySerializer;
 
 import common.message.MessageType;
 

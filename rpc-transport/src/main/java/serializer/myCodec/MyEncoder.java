@@ -1,9 +1,9 @@
-package common.serializer.myCodec;
+package serializer.myCodec;
 
 import common.message.MessageType;
 import common.message.RpcRequest;
 import common.message.RpcResponse;
-import common.serializer.mySerializer.Serializer;
+import serializer.mySerializer.Serializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;

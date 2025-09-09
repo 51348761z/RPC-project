@@ -1,4 +1,4 @@
-package Client.rpcClient.impl;
+package Client.impl;
 
 import Client.netty.nettyInitializer.NettyClientInitializer;
 import Client.rpcClient.RpcClient;

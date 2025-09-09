@@ -1,4 +1,4 @@
-package Client.rpcClient.impl;
+package Client.impl;
 
 import Client.rpcClient.RpcClient;
 import common.message.RpcRequest;

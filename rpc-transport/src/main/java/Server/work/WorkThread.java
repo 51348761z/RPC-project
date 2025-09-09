@@ -1,4 +1,4 @@
-package Server.server.work;
+package Server.work;
 
 import Server.provider.ServiceProvider;
 import common.message.RpcRequest;
