@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>rpc-common</module>
+        <module>rpc-core</module>
     </modules>
 
     <properties>
