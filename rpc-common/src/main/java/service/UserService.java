@@ -1,6 +1,6 @@
-package common.service;
+package service;
 
-import common.pojo.User;
+import pojo.User;
 
 public interface UserService {
     User getUserById(Integer id);
