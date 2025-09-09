@@ -37,7 +37,7 @@ public class JsonSerializer implements Serializer {
                     System.out.println("Data type is null, defaulting to Object");
                     dataType = Object.class; // Default to Object if no data type is specified
                 }
-                if (!dataType.isAssignableFrom(response.getData().getClass())) {
+                if (response.getData() != null && !dataType.isAssignableFrom(response.getData().getClass())) {
                     response.setData(JSONObject.toJavaObject((JSONObject) response.getData(), dataType));
                 }
                 object = response;
