@@ -1,9 +1,9 @@
 package Server.netty.handler;
 
 import Server.provider.ServiceProvider;
-import Server.rateLimit.RateLimit;
-import common.message.RpcRequest;
-import common.message.RpcResponse;
+import Server.RateLimit.RateLimit;
+import RpcCommon.RpcMessage.RpcResponse;
+import RpcCommon.RpcMessage.RpcRequest;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;

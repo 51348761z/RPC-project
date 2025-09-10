@@ -1,8 +1,7 @@
 package Server.provider;
 
-import Server.rateLimit.provider.RateLimitProvider;
+import Server.RateLimit.RateLimitProvider;
 import Server.serviceRegister.ServiceRegister;
-import Server.serviceRegister.impl.ZookeeperServiceRegister;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -15,15 +14,12 @@ public class ServiceProvider {
     private ServiceRegister serviceRegister;
     private RateLimitProvider rateLimitProvider;
 
-    public ServiceProvider() {
-        this("127.0.0.1", 9999);
-    }
-    public ServiceProvider(String host, int port) {
+    public ServiceProvider(String host, int port, ServiceRegister serviceRegister, RateLimitProvider rateLimitProvider) {
         this.host = host;
         this.port = port;
         this.localInterfaceProvider = new HashMap<>();
-        this.serviceRegister = new ZookeeperServiceRegister();
-        this.rateLimitProvider = new RateLimitProvider();
+        this.serviceRegister = serviceRegister;
+        this.rateLimitProvider = rateLimitProvider;
     }
 
     public void provideServiceInterface(Object service, boolean canRetry) {

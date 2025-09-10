@@ -1,8 +1,8 @@
 package Client.impl;
 
 import Client.rpcClient.RpcClient;
-import common.message.RpcRequest;
-import common.message.RpcResponse;
+import RpcCommon.RpcMessage.RpcRequest;
+import RpcCommon.RpcMessage.RpcResponse;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;

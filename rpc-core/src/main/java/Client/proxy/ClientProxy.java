@@ -1,14 +1,13 @@
 package Client.proxy;
 
-import Client.circuitBreaker.CircuitBreaker;
-import Client.circuitBreaker.CircuitBreakerProvider;
+import Client.CircuitBreaker.CircuitBreaker;
+import Client.CircuitBreaker.CircuitBreakerProvider;
 import Client.rpcClient.RpcClient;
-import Client.rpcClient.impl.NettyRpcClient;
-import Client.serviceCenter.ServiceCenter;
-import Client.serviceCenter.ZookeeperServiceCenter;
-import Client.retry.guavaRetry;
-import common.message.RpcRequest;
-import common.message.RpcResponse;
+//import Client.rpcClient.impl.NettyRpcClient;
+import Client.ServiceCenter.ServiceCenter;
+import Client.RpcRetry.RetryStrategy;
+import RpcCommon.RpcMessage.RpcRequest;
+import RpcCommon.RpcMessage.RpcResponse;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -18,11 +17,13 @@ public class ClientProxy implements InvocationHandler {
     private RpcClient rpcClient;
     private ServiceCenter serviceCenter;
     private CircuitBreakerProvider circuitBreakerProvider;
+    private RetryStrategy retryStrategy;
 
-    public ClientProxy() throws InterruptedException {
-        serviceCenter = new ZookeeperServiceCenter();
-        rpcClient = new NettyRpcClient(serviceCenter);
-        circuitBreakerProvider = new CircuitBreakerProvider();
+    public ClientProxy(RpcClient rpcClient, ServiceCenter serviceCenter, CircuitBreakerProvider circuitBreakerProvider, RetryStrategy retryStrategy) throws InterruptedException {
+        this.rpcClient = rpcClient;
+        this.serviceCenter = serviceCenter;
+        this.circuitBreakerProvider = circuitBreakerProvider;
+        this.retryStrategy = retryStrategy;
     }
     public ClientProxy(RpcClient rpcClient) {
         this.rpcClient = rpcClient;
@@ -47,7 +48,7 @@ public class ClientProxy implements InvocationHandler {
 
         RpcResponse response;
         if (serviceCenter.checkRetry(request.getInterfaceName())) {
-            response = new guavaRetry().sendServiceWithRetry(request, rpcClient);
+            response = retryStrategy.excute(request, rpcClient);
         } else {
             response = rpcClient.sendRequest(request);
         }

@@ -2,10 +2,10 @@ package Client.impl;
 
 import Client.netty.nettyInitializer.NettyClientInitializer;
 import Client.rpcClient.RpcClient;
-import Client.serviceCenter.ServiceCenter;
-import Client.serviceCenter.ZookeeperServiceCenter;
-import common.message.RpcRequest;
-import common.message.RpcResponse;
+import Client.ServiceCenter.ServiceCenter;
+import Client.ServiceCenter.Impl.ZookeeperServiceCenter;
+import RpcCommon.RpcMessage.RpcRequest;
+import RpcCommon.RpcMessage.RpcResponse;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

@@ -1,9 +1,9 @@
 package Client.netty.nettyInitializer;
 
 import Client.netty.handler.NettyClientHandler; // Imports the custom client-side business logic handler
-import common.serializer.myCodec.MyDecoder;
-import common.serializer.myCodec.MyEncoder;
-import common.serializer.mySerializer.JsonSerializer;
+import RpcSerializer.myCodec.MyEncoder;
+import RpcSerializer.myCodec.MyDecoder;
+import RpcSerializer.mySerializer.Impl.JsonSerializer;
 import io.netty.channel.ChannelInitializer; // Netty's base class for initializing a Channel
 import io.netty.channel.ChannelPipeline; // Netty's chain of ChannelHandlers
 import io.netty.channel.socket.SocketChannel; // Netty's abstraction for a TCP socket connection

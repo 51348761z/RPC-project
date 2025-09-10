@@ -12,6 +12,11 @@
         <module>rpc-common</module>
         <module>rpc-core</module>
         <module>rpc-transport</module>
+        <module>rpc-registry</module>
+        <module>rpc-loadbalancer</module>
+        <module>rpc-fault-tolerance</module>
+        <module>rpc-rate-limiter</module>
+        <module>rpc-example</module>
     </modules>
 
     <properties>

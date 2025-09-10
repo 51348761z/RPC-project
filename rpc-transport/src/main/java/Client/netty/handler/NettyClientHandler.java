@@ -1,6 +1,6 @@
 package Client.netty.handler;
 
-import common.message.RpcResponse;
+import RpcCommon.RpcMessage.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;

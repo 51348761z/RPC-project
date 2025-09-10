@@ -1,8 +1,8 @@
 package Server.work;
 
 import Server.provider.ServiceProvider;
-import common.message.RpcRequest;
-import common.message.RpcResponse;
+import RpcCommon.RpcMessage.RpcRequest;
+import RpcCommon.RpcMessage.RpcResponse;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;
