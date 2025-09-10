@@ -1,42 +1,48 @@
 package wongs.tinyrpc.balancer;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.client.balancer.LoadBalancer;
 
 import java.util.*;
 
+@Slf4j
 public class ConsistenctyHashBalancer implements LoadBalancer {
+    @Getter
     private static final int VIRTUAL_NODES = 5; // Number of virtual node;
-    private SortedMap<Integer, String> hashCircle = new TreeMap<Integer, String>(); // <hash, virtual node name>
+    @Getter
+    private SortedMap<Integer, String> hashRing = new TreeMap<Integer, String>(); // <hash, virtual node name>
+    @Getter
     private List<String> realNodes = new LinkedList<>(); // Real nodes, i.e., the actual service addresses
     private String[] servers = null;
 
-    private void initBalancer(List<String> serverList) {
+    public void initBalancer(List<String> serverList) {
         for (String server : serverList) {
             realNodes.add(server);
             System.out.println("Adding real node: " + server);
             for (int i = 0; i < VIRTUAL_NODES; i++) {
                 String virtualNode = server + "&&VN" + i;
                 int hash = getHash(virtualNode);
-                hashCircle.put(hash, virtualNode);
+                hashRing.put(hash, virtualNode);
                 System.out.println("Adding virtual node: " + virtualNode + " with hash: " + hash);
             }
         }
     }
 
     public String getServer(String node, List<String> serverList) {
-        if ((hashCircle.isEmpty())) {
+        if ((hashRing.isEmpty())) {
             initBalancer(serverList);
         }
 
         int hash = getHash(node);
         Integer key = null;
-        SortedMap<Integer, String> subMap = hashCircle.tailMap(hash);
+        SortedMap<Integer, String> subMap = hashRing.tailMap(hash);
         if (subMap.isEmpty()) {
-            key = hashCircle.lastKey();
+            key = hashRing.lastKey();
         } else {
             key = subMap.firstKey();
         }
-        String virtualNode = hashCircle.get(key);
+        String virtualNode = hashRing.get(key);
         return virtualNode.substring(0, virtualNode.indexOf("&&VN")); // Extract the real server address from the virtual node
     }
 
@@ -66,7 +72,7 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
             for (int i = 0; i < VIRTUAL_NODES; i++) {
                 String virtualNode = node + "&&VN" + i;
                 int hash = getHash(virtualNode);
-                hashCircle.put(hash, virtualNode);
+                hashRing.put(hash, virtualNode);
                 System.out.println("Adding new virtual node: " + virtualNode + " with hash: " + hash);
             }
         }
@@ -80,8 +86,8 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
             for (int i = 0; i < VIRTUAL_NODES; i++) {
                 String virtualNode = node + "&&VN" + i;
                 int hash = getHash(virtualNode);
-                if (hashCircle.containsKey(hash)) {
-                    hashCircle.remove(hash);
+                if (hashRing.containsKey(hash)) {
+                    hashRing.remove(hash);
                     System.out.println("Removing virtual node: " + virtualNode + " with hash: " + hash);
                 } else {
                     System.out.println("Virtual node: " + virtualNode + " with hash: " + hash + " does not exist, cannot remove.");
@@ -99,3 +105,4 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
         return getServer(random, addressList);
     }
 }
+
