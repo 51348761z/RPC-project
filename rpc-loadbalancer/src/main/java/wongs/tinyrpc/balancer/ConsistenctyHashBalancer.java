@@ -24,7 +24,10 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
     }
 
     public String getServer(String node, List<String> serverList) {
-        initBalancer(serverList);
+        if ((hashCircle.isEmpty())) {
+            initBalancer(serverList);
+        }
+
         int hash = getHash(node);
         Integer key = null;
         SortedMap<Integer, String> subMap = hashCircle.tailMap(hash);
@@ -90,7 +93,7 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
     @Override
     public String balanceStrategy(List<String> addressList) {
         if (addressList == null || addressList.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Server address list is empty");
         }
         String random = UUID.randomUUID().toString(); // Generate a random string to use as the key for consistent hashing
         return getServer(random, addressList);
