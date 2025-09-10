@@ -5,5 +5,5 @@ import wongs.tinyrpc.common.model.RpcRequest;
 import wongs.tinyrpc.common.model.RpcResponse;
 
 public interface RetryStrategy {
-    RpcResponse excute(RpcRequest request, RpcClient rpcClient);
+    RpcResponse execute(RpcRequest request, RpcClient rpcClient);
 }

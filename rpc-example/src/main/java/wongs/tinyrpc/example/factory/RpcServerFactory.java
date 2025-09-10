@@ -2,8 +2,8 @@ package wongs.tinyrpc.example.factory;
 
 import wongs.tinyrpc.core.server.provider.ServiceProvider;
 import wongs.tinyrpc.core.server.transport.RpcServer;
-import netty.server.NettyRPCServer;
-import socket.SimpleRPCServer;
+import wongs.tinyrpc.transport.netty.server.NettyRpcServer;
+import wongs.tinyrpc.transport.socket.SimpleRPCServer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +28,7 @@ public class RpcServerFactory {
         return switch (serverType) {
             case "netty" -> {
                 System.out.println("Creating Netty Rpc Server...");
-                yield new NettyRPCServer(serviceProvider);
+                yield new NettyRpcServer(serviceProvider);
             }
             case "simplesocket" -> {
                 System.out.println("Creating Simple Socket Rpc Server...");

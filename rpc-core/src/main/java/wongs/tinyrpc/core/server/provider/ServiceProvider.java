@@ -1,7 +1,7 @@
 package wongs.tinyrpc.core.server.provider;
 
 import wongs.tinyrpc.core.server.ratelimit.RateLimitProvider;
-import wongs.tinyrpc.core.server.registry.ServiceRegister;
+import wongs.tinyrpc.core.server.registry.ServiceRegistry;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -11,14 +11,14 @@ public class ServiceProvider {
     private Map<String, Object> localInterfaceProvider;
     private String host;
     private int port;
-    private ServiceRegister serviceRegister;
+    private ServiceRegistry serviceRegistry;
     private RateLimitProvider rateLimitProvider;
 
-    public ServiceProvider(String host, int port, ServiceRegister serviceRegister, RateLimitProvider rateLimitProvider) {
+    public ServiceProvider(String host, int port, ServiceRegistry serviceRegistry, RateLimitProvider rateLimitProvider) {
         this.host = host;
         this.port = port;
         this.localInterfaceProvider = new HashMap<>();
-        this.serviceRegister = serviceRegister;
+        this.serviceRegistry = serviceRegistry;
         this.rateLimitProvider = rateLimitProvider;
     }
 
@@ -27,7 +27,7 @@ public class ServiceProvider {
         Class<?>[] interfaceNames = service.getClass().getInterfaces();
         for (Class<?> interfaceName : interfaceNames) {
             localInterfaceProvider.put(interfaceName.getName(), service);
-            serviceRegister.register(interfaceName.getName(), new InetSocketAddress(host, port), canRetry);
+            serviceRegistry.register(interfaceName.getName(), new InetSocketAddress(host, port), canRetry);
         }
     }
 

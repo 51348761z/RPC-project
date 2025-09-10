@@ -4,7 +4,7 @@ import wongs.tinyrpc.core.client.breaker.CircuitBreaker;
 import wongs.tinyrpc.core.client.breaker.CircuitBreakerProvider;
 import wongs.tinyrpc.core.client.transport.RpcClient;
 //import Client.rpcClient.impl.NettyRpcClient;
-import wongs.tinyrpc.core.client.discovery.ServiceCenter;
+import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
 import wongs.tinyrpc.core.client.retry.RetryStrategy;
 import wongs.tinyrpc.common.model.RpcRequest;
 import wongs.tinyrpc.common.model.RpcResponse;
@@ -15,13 +15,13 @@ import java.lang.reflect.Proxy;
 
 public class ClientProxy implements InvocationHandler {
     private RpcClient rpcClient;
-    private ServiceCenter serviceCenter;
+    private ServiceDiscovery serviceDiscovery;
     private CircuitBreakerProvider circuitBreakerProvider;
     private RetryStrategy retryStrategy;
 
-    public ClientProxy(RpcClient rpcClient, ServiceCenter serviceCenter, CircuitBreakerProvider circuitBreakerProvider, RetryStrategy retryStrategy) throws InterruptedException {
+    public ClientProxy(RpcClient rpcClient, ServiceDiscovery serviceDiscovery, CircuitBreakerProvider circuitBreakerProvider, RetryStrategy retryStrategy) throws InterruptedException {
         this.rpcClient = rpcClient;
-        this.serviceCenter = serviceCenter;
+        this.serviceDiscovery = serviceDiscovery;
         this.circuitBreakerProvider = circuitBreakerProvider;
         this.retryStrategy = retryStrategy;
     }
@@ -47,8 +47,8 @@ public class ClientProxy implements InvocationHandler {
         }
 
         RpcResponse response;
-        if (serviceCenter.checkRetry(request.getInterfaceName())) {
-            response = retryStrategy.excute(request, rpcClient);
+        if (serviceDiscovery.checkRetry(request.getInterfaceName())) {
+            response = retryStrategy.execute(request, rpcClient);
         } else {
             response = rpcClient.sendRequest(request);
         }

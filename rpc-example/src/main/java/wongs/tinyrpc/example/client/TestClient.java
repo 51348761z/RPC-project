@@ -3,9 +3,9 @@ package wongs.tinyrpc.example.client;
 import wongs.tinyrpc.core.client.breaker.CircuitBreakerProvider;
 import wongs.tinyrpc.fault.breaker.CircuitBreakerProviderImpl;
 import wongs.tinyrpc.core.client.retry.RetryStrategy;
-import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceCenter;
-import wongs.tinyrpc.core.client.discovery.ServiceCenter;
-import netty.client.NettyRpcClient;
+import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceDiscovery;
+import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
+import wongs.tinyrpc.transport.netty.client.NettyRpcClient;
 import wongs.tinyrpc.core.client.proxy.ClientProxy;
 import wongs.tinyrpc.core.client.transport.RpcClient;
 import wongs.tinyrpc.fault.retry.GuavaRetryStrategy;
@@ -15,11 +15,11 @@ import wongs.tinyrpc.common.service.UserService;
 public class TestClient {
     public static void main(String[] args) throws InterruptedException {
         // construct client proxy
-        ServiceCenter serviceCenter = new ZookeeperServiceCenter();
-        RpcClient rpcClient = new NettyRpcClient(serviceCenter);
+        ServiceDiscovery serviceDiscovery = new ZookeeperServiceDiscovery();
+        RpcClient rpcClient = new NettyRpcClient(serviceDiscovery);
         CircuitBreakerProvider circuitBreakerProvider = new CircuitBreakerProviderImpl();
         RetryStrategy retryStrategy = new GuavaRetryStrategy();
-        ClientProxy clientProxy = new ClientProxy(rpcClient, serviceCenter, circuitBreakerProvider, retryStrategy);
+        ClientProxy clientProxy = new ClientProxy(rpcClient, serviceDiscovery, circuitBreakerProvider, retryStrategy);
 
         UserService proxy = clientProxy.getProxy(UserService.class);
 

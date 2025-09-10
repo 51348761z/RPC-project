@@ -13,7 +13,7 @@ public class GuavaRetryStrategy implements RetryStrategy {
     private RpcClient rpcClient;
 
     @Override
-    public RpcResponse excute(RpcRequest request, RpcClient rpcClient) {
+    public RpcResponse execute(RpcRequest request, RpcClient rpcClient) {
         this.rpcClient = rpcClient;
         Retryer<RpcResponse> retryer = RetryerBuilder.<RpcResponse>newBuilder()
                 .retryIfException()

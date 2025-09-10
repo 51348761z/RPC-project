@@ -1,8 +1,8 @@
 package wongs.tinyrpc.example.factory;
 
 import wongs.tinyrpc.core.client.transport.RpcClient;
-import netty.client.NettyRpcClient;
-import socket.SimpleSocketRpcClient;
+import wongs.tinyrpc.transport.netty.client.NettyRpcClient;
+import wongs.tinyrpc.transport.socket.SimpleSocketRpcClient;
 
 import java.io.IOException;
 import java.io.InputStream;

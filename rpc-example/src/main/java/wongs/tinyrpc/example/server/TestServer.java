@@ -8,18 +8,18 @@ import wongs.tinyrpc.core.server.transport.RpcServer;
 import wongs.tinyrpc.example.factory.RpcServerFactory;
 import wongs.tinyrpc.common.service.UserService;
 import wongs.tinyrpc.example.service.UserServiceImpl;
-import wongs.tinyrpc.core.server.registry.ServiceRegister;
-import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceRegister;
+import wongs.tinyrpc.core.server.registry.ServiceRegistry;
+import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceRegistry;
 
 public class TestServer {
     public static void main(String[] args) {
         String host = RpcServerFactory.getServerHost();
         int port = RpcServerFactory.getServerPort();
         UserService userService = new UserServiceImpl();
-        ServiceRegister serviceRegister = new ZookeeperServiceRegister();
+        ServiceRegistry serviceRegistry = new ZookeeperServiceRegistry();
         RateLimitProvider rateLimitProvider = new RateLimitProviderImpl();
 
-        ServiceProvider serviceProvider = new ServiceProvider(host, port, serviceRegister, rateLimitProvider);
+        ServiceProvider serviceProvider = new ServiceProvider(host, port, serviceRegistry, rateLimitProvider);
         boolean retryEnabled = RetryConfig.isRetryEnabled(UserService.class.getName());
         serviceProvider.provideServiceInterface(userService, retryEnabled);
 
