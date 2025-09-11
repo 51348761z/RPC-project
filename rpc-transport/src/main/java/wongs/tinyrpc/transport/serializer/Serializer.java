@@ -1,8 +1,7 @@
 package wongs.tinyrpc.transport.serializer;
 
 import wongs.tinyrpc.common.protocol.MessageType;
-import wongs.tinyrpc.transport.serializer.Impl.JsonSerializer;
-import wongs.tinyrpc.transport.serializer.Impl.ObjectSerializer;
+import wongs.tinyrpc.transport.serializer.Impl.*;
 
 public interface Serializer {
     byte[] serialize(Object object);
@@ -13,7 +12,10 @@ public interface Serializer {
         return switch (type) {
             case OBJECT_SERIALIZER -> new ObjectSerializer();
             case JSON_SERIALIZER -> new JsonSerializer();
-            default -> null;
+            case HESSIAN_SERIALIZER -> new HessianSerializer();
+            case KRYO_SERIALIZER -> new KryoSerializer();
+            case PROTOSTUFF_SERIALIZER -> new ProtostuffSerializer();
+            default -> throw new IllegalArgumentException("Unknown serializer type: " + type);
         };
     }
 }

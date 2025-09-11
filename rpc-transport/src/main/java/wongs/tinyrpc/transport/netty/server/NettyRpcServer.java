@@ -7,7 +7,6 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import lombok.AllArgsConstructor;
 import wongs.tinyrpc.transport.serializer.Serializer;
 
 @Slf4j
@@ -15,8 +14,10 @@ public class NettyRpcServer implements RpcServer {
     private ServiceProvider serviceProvider;
     private ChannelFuture channelFuture;
     private Serializer serializer;
-    public NettyRpcServer(ServiceProvider serviceProvider) {
+    public NettyRpcServer(ServiceProvider serviceProvider, Serializer serializer) {
         this.serviceProvider = serviceProvider;
+        this.serializer = serializer;
+        System.out.println("NettyRpcServer initialized with serializer: " + serializer.getClass().getName());
     }
 
     @Override

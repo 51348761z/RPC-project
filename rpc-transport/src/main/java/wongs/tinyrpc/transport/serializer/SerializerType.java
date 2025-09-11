@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum SerializerType {
-    OBJECT_SERIALIZER(0), JSON_SERIALIZER(1);
+    OBJECT_SERIALIZER(0), JSON_SERIALIZER(1), HESSIAN_SERIALIZER(2), KRYO_SERIALIZER(3), PROTOSTUFF_SERIALIZER(4);
 
     private final int code;
 

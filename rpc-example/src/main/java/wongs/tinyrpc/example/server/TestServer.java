@@ -2,6 +2,7 @@ package wongs.tinyrpc.example.server;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.Environment;
+import wongs.tinyrpc.core.server.registry.ServiceRegistry;
 import wongs.tinyrpc.example.config.RpcFramworkConfig;
 import wongs.tinyrpc.core.server.provider.ServiceProvider;
 import wongs.tinyrpc.core.server.transport.RpcServer;

@@ -24,8 +24,7 @@ import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceDiscovery;
 import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceRegistry;
 import wongs.tinyrpc.transport.netty.client.NettyRpcClient;
 import wongs.tinyrpc.transport.netty.server.NettyRpcServer;
-import wongs.tinyrpc.transport.serializer.Impl.JsonSerializer;
-import wongs.tinyrpc.transport.serializer.Impl.ObjectSerializer;
+import wongs.tinyrpc.transport.serializer.Impl.*;
 import wongs.tinyrpc.transport.serializer.Serializer;
 import wongs.tinyrpc.transport.socket.SimpleRPCServer;
 
@@ -101,9 +100,9 @@ public class RpcFramworkConfig {
     }
 
     @Bean
-    RpcServer rpcServer(ServiceProvider serviceProvider) {
+    RpcServer rpcServer(ServiceProvider serviceProvider, Serializer serializer) {
         return switch (serverType.toLowerCase()) {
-            case "netty" -> new NettyRpcServer(serviceProvider);
+            case "netty" -> new NettyRpcServer(serviceProvider, serializer);
             case "socket" -> new SimpleRPCServer(serviceProvider);
             default -> throw new IllegalArgumentException("Unsupported server type: " + serverType);
         };
@@ -115,6 +114,9 @@ public class RpcFramworkConfig {
         return switch (serializerType.toLowerCase()) {
             case "json" -> new JsonSerializer();
             case "java" -> new ObjectSerializer();
+            case "hessian" -> new HessianSerializer();
+            case "kryo" -> new KryoSerializer();
+            case "protostuff" -> new ProtostuffSerializer();
             default -> throw new IllegalArgumentException("Unsupported serializer type: " + serializerType);
         };
     }
