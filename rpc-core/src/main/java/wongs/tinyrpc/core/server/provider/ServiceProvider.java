@@ -1,5 +1,6 @@
 package wongs.tinyrpc.core.server.provider;
 
+import lombok.Getter;
 import wongs.tinyrpc.core.server.ratelimit.RateLimitProvider;
 import wongs.tinyrpc.core.server.registry.ServiceRegistry;
 
@@ -7,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public class ServiceProvider {
     private Map<String, Object> localInterfaceProvider;
     private String host;

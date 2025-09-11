@@ -12,30 +12,37 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
+import wongs.tinyrpc.transport.serializer.Impl.JsonSerializer;
+import wongs.tinyrpc.transport.serializer.Serializer;
 
 import java.net.InetSocketAddress;
 
 public class NettyRpcClient implements RpcClient {
-    private static final Bootstrap bootstrap;
+    private final Bootstrap bootstrap;
     private static final EventLoopGroup eventLoopGroup;
     private ServiceDiscovery serviceDiscovery;
+    private Serializer serializer;
 
     public NettyRpcClient() throws InterruptedException {
-        this.serviceDiscovery = new ZookeeperServiceDiscovery();
+        this(new ZookeeperServiceDiscovery(), new JsonSerializer());
     }
-    public NettyRpcClient(ServiceDiscovery serviceDiscovery) throws InterruptedException {
+    public NettyRpcClient(ServiceDiscovery serviceDiscovery, Serializer serializer) throws InterruptedException {
         this.serviceDiscovery = serviceDiscovery;
+        this.serializer = serializer;
+        this.bootstrap = new Bootstrap();
+        bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new NettyClientInitializer(this.serializer));
     }
     static {
         eventLoopGroup = new NioEventLoopGroup();
-        bootstrap = new Bootstrap();
-        bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new NettyClientInitializer());
     }
     @Override
     public RpcResponse sendRequest(RpcRequest request) {
         System.out.println("Sending RPC request: " + request + Thread.currentThread().getStackTrace()[2].getMethodName());
         // get the service address from the service center
         InetSocketAddress address = serviceDiscovery.serviceDiscovery(request.getInterfaceName());
+        if (address == null) {
+            throw new RuntimeException("Service not found: " + request.getInterfaceName());
+        }
         String host = address.getHostName();
         int port = address.getPort();
         try {
@@ -50,8 +57,8 @@ public class NettyRpcClient implements RpcClient {
             System.out.println(response);
             return response;
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Failed to send request: " + e.getMessage(), e);
         }
-        return null;
     }
 }

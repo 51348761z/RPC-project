@@ -1,25 +1,16 @@
 package wongs.tinyrpc.example.client;
 
-import wongs.tinyrpc.core.client.breaker.CircuitBreakerProvider;
-import wongs.tinyrpc.fault.breaker.CircuitBreakerProviderImpl;
-import wongs.tinyrpc.core.client.retry.RetryStrategy;
-import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceDiscovery;
-import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
-import wongs.tinyrpc.transport.netty.client.NettyRpcClient;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import wongs.tinyrpc.example.config.RpcFramworkConfig;
 import wongs.tinyrpc.core.client.proxy.ClientProxy;
-import wongs.tinyrpc.core.client.transport.RpcClient;
-import wongs.tinyrpc.fault.retry.GuavaRetryStrategy;
 import wongs.tinyrpc.common.dto.User;
 import wongs.tinyrpc.common.service.UserService;
 
 public class TestClient {
     public static void main(String[] args) throws InterruptedException {
-        // construct client proxy
-        ServiceDiscovery serviceDiscovery = new ZookeeperServiceDiscovery();
-        RpcClient rpcClient = new NettyRpcClient(serviceDiscovery);
-        CircuitBreakerProvider circuitBreakerProvider = new CircuitBreakerProviderImpl();
-        RetryStrategy retryStrategy = new GuavaRetryStrategy();
-        ClientProxy clientProxy = new ClientProxy(rpcClient, serviceDiscovery, circuitBreakerProvider, retryStrategy);
+
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(RpcFramworkConfig.class);
+        ClientProxy clientProxy = context.getBean(ClientProxy.class);
 
         UserService proxy = clientProxy.getProxy(UserService.class);
 

@@ -8,12 +8,16 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.AllArgsConstructor;
+import wongs.tinyrpc.transport.serializer.Serializer;
 
 @Slf4j
-@AllArgsConstructor
 public class NettyRpcServer implements RpcServer {
     private ServiceProvider serviceProvider;
     private ChannelFuture channelFuture;
+    private Serializer serializer;
+    public NettyRpcServer(ServiceProvider serviceProvider) {
+        this.serviceProvider = serviceProvider;
+    }
 
     @Override
     public void start(int port) {
@@ -21,7 +25,7 @@ public class NettyRpcServer implements RpcServer {
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-            serverBootstrap.group(bossGroup, workGroup).channel(NioServerSocketChannel.class).childHandler(new NettyServerInitializer(serviceProvider));
+            serverBootstrap.group(bossGroup, workGroup).channel(NioServerSocketChannel.class).childHandler(new NettyServerInitializer(serviceProvider, serializer));
             channelFuture = serverBootstrap.bind(port).sync();
             log.info("RPC server binded on port {}", port);
             channelFuture.channel().closeFuture().sync();
