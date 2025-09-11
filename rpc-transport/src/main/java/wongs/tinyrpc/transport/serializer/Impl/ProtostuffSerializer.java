@@ -38,4 +38,9 @@ public class ProtostuffSerializer implements Serializer {
     public int getCode() {
         return SerializerType.PROTOSTUFF_SERIALIZER.getCode();
     }
+
+    @Override
+    public SerializerType getType() {
+        return SerializerType.PROTOSTUFF_SERIALIZER;
+    }
 }

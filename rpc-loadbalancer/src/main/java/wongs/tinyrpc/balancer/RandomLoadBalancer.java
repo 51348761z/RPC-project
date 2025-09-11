@@ -50,4 +50,9 @@ public class RandomLoadBalancer implements LoadBalancer {
         }
         log.info("Node not found: {}", node);
     }
+
+    @Override
+    public String getName() {
+        return "Random";
+    }
 }

@@ -1,0 +1,5 @@
+wongs.tinyrpc.transport.serializer.Impl.JsonSerializer
+wongs.tinyrpc.transport.serializer.Impl.ObjectSerializer
+wongs.tinyrpc.transport.serializer.Impl.HessianSerializer
+wongs.tinyrpc.transport.serializer.Impl.KryoSerializer
+wongs.tinyrpc.transport.serializer.Impl.ProtostuffSerializer

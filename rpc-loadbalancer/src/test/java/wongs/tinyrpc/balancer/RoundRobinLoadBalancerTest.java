@@ -9,14 +9,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-class RoundLoadBalancerTest {
+class RoundRobinLoadBalancerTest {
 
-    private RoundLoadBalancer loadBalancer;
+    private RoundRobinLoadBalancer loadBalancer;
     private List<String> addresses;
 
     @BeforeEach
     void setUp() {
-        loadBalancer = new RoundLoadBalancer();
+        loadBalancer = new RoundRobinLoadBalancer();
         addresses = Arrays.asList("127.0.0.1:8080", "127.0.0.1:8081", "127.0.0.1:8082");
     }
 

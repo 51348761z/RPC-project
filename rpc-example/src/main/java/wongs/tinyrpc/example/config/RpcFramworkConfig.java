@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import wongs.tinyrpc.balancer.ConsistenctyHashBalancer;
 import wongs.tinyrpc.balancer.RandomLoadBalancer;
-import wongs.tinyrpc.balancer.RoundLoadBalancer;
+import wongs.tinyrpc.balancer.RoundRobinLoadBalancer;
 import wongs.tinyrpc.core.client.balancer.LoadBalancer;
 import wongs.tinyrpc.core.client.breaker.CircuitBreakerProvider;
 import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
@@ -24,9 +24,10 @@ import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceDiscovery;
 import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceRegistry;
 import wongs.tinyrpc.transport.netty.client.NettyRpcClient;
 import wongs.tinyrpc.transport.netty.server.NettyRpcServer;
-import wongs.tinyrpc.transport.serializer.Impl.*;
 import wongs.tinyrpc.transport.serializer.Serializer;
 import wongs.tinyrpc.transport.socket.SimpleRPCServer;
+
+import java.util.ServiceLoader;
 
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -55,12 +56,16 @@ public class RpcFramworkConfig {
 
     @Bean
     public LoadBalancer loadBalancer() {
-        return switch (loadBalancerStratergy.toLowerCase()) {
-            case "random" -> new RandomLoadBalancer();
-            case "roundrboin" -> new RoundLoadBalancer();
-            case "consistenhash" -> new ConsistenctyHashBalancer();
-            default -> throw new IllegalArgumentException("Unsupported load balancer strategy: " + loadBalancerStratergy);
-        };
+        ServiceLoader<LoadBalancer> loader = ServiceLoader.load(LoadBalancer.class);
+        String userChoice = loadBalancerStratergy.toLowerCase();
+        for (LoadBalancer balancer : loader) {
+            String balancerName = balancer.getName().toLowerCase();
+            if (balancerName.equals(userChoice)) {
+                System.out.println("SPI: Using load balancer: " + userChoice);
+                return balancer;
+            }
+        }
+        throw new IllegalArgumentException("Unsupported load balancer type: " + loadBalancerStratergy);
     }
 
     @Bean
@@ -111,13 +116,16 @@ public class RpcFramworkConfig {
     // public components configuration
     @Bean
     Serializer serializer() {
-        return switch (serializerType.toLowerCase()) {
-            case "json" -> new JsonSerializer();
-            case "java" -> new ObjectSerializer();
-            case "hessian" -> new HessianSerializer();
-            case "kryo" -> new KryoSerializer();
-            case "protostuff" -> new ProtostuffSerializer();
-            default -> throw new IllegalArgumentException("Unsupported serializer type: " + serializerType);
-        };
+        ServiceLoader<Serializer> loader = ServiceLoader.load(Serializer.class);
+        String userChoice = serializerType.toLowerCase();
+
+        for (Serializer serializer : loader) {
+            String serializerName = serializer.getType().name().replace("_SERIALIZER", "").toLowerCase();
+            if (serializerName.equals(userChoice)) {
+                System.out.println("SPI: Using serializer: " + userChoice);
+                return serializer;
+            }
+        }
+        throw new IllegalArgumentException("Unsupported serializer type: " + serializerType);
     }
 }

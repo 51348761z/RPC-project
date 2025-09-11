@@ -38,4 +38,9 @@ public class HessianSerializer implements Serializer {
     public int getCode() {
         return SerializerType.HESSIAN_SERIALIZER.getCode();
     }
+
+    @Override
+    public SerializerType getType() {
+        return SerializerType.HESSIAN_SERIALIZER;
+    }
 }

@@ -55,4 +55,9 @@ public class JsonSerializer implements Serializer {
     public int getCode() {
         return SerializerType.JSON_SERIALIZER.getCode();
     }
+
+    @Override
+    public  SerializerType getType() {
+        return SerializerType.JSON_SERIALIZER;
+    }
 }

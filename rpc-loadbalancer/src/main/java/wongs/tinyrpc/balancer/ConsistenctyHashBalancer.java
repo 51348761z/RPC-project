@@ -104,5 +104,10 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
         String random = UUID.randomUUID().toString(); // Generate a random string to use as the key for consistent hashing
         return getServer(random, addressList);
     }
+
+    @Override
+    public String getName() {
+        return "ConsistentHash";
+    }
 }
 

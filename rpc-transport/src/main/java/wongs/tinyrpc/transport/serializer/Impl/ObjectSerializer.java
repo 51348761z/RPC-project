@@ -43,4 +43,9 @@ public class ObjectSerializer implements Serializer {
     public int getCode() {
         return SerializerType.OBJECT_SERIALIZER.getCode();
     }
+
+    @Override
+    public SerializerType getType() {
+        return SerializerType.OBJECT_SERIALIZER;
+    }
 }

@@ -1,5 +1,6 @@
 package wongs.tinyrpc.transport.codec;
 
+import lombok.AllArgsConstructor;
 import wongs.tinyrpc.common.protocol.MessageType;
 import wongs.tinyrpc.transport.serializer.Serializer;
 import wongs.tinyrpc.transport.serializer.SerializerType;
@@ -9,8 +10,10 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class MyDecoder extends ByteToMessageDecoder {
     private static final int HARDER_LENGTH = 8;
+    private Serializer serializer;
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         System.out.println("MyDecoder called......");
@@ -28,8 +31,8 @@ public class MyDecoder extends ByteToMessageDecoder {
         }
 
         // Read the serializer type and create the serializer
-        short serializerType = in.readShort();
-        Serializer serializer = this.createSerializer(serializerType);
+//        short serializerType = in.readShort();
+//        Serializer serializer = this.createSerializer(serializerType);
 
         // Read the length of the message
         int messageLength = in.readInt();
@@ -47,13 +50,5 @@ public class MyDecoder extends ByteToMessageDecoder {
 
     private boolean isValidMessageType(short messageType) {
         return messageType == MessageType.RPC_REQUEST.getCode() || messageType == MessageType.RPC_RESPONSE.getCode();
-    }
-
-    private Serializer createSerializer(short serializerType) {
-        Serializer serializer = Serializer.createSerializer(SerializerType.fromValue(serializerType));
-        if (serializer == null) {
-            throw new RuntimeException("Unsupported serializer type: " + serializerType);
-        }
-        return serializer;
     }
 }

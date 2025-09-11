@@ -46,4 +46,9 @@ public class KryoSerializer implements Serializer {
     public int getCode() {
         return SerializerType.KRYO_SERIALIZER.getCode();
     }
+
+    @Override
+    public SerializerType getType() {
+        return SerializerType.KRYO_SERIALIZER;
+    }
 }

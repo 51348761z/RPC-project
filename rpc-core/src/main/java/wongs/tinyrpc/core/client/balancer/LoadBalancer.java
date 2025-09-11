@@ -8,4 +8,6 @@ public interface LoadBalancer {
     void addNode(String node);
 
     void delNode(String node);
+
+    String getName();
 }

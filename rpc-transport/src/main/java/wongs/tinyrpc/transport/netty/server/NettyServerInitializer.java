@@ -1,7 +1,6 @@
 package wongs.tinyrpc.transport.netty.server;
 
 import wongs.tinyrpc.core.server.provider.ServiceProvider;
-import wongs.tinyrpc.transport.serializer.Impl.JsonSerializer;
 import wongs.tinyrpc.transport.codec.MyDecoder;
 import wongs.tinyrpc.transport.codec.MyEncoder;
 import io.netty.channel.ChannelInitializer;
@@ -18,7 +17,7 @@ public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
-        pipeline.addLast(new MyDecoder());
+        pipeline.addLast(new MyDecoder(serializer));
         pipeline.addLast(new MyEncoder(serializer));
         pipeline.addLast(new NettyServerHandler(serviceProvider));
     }

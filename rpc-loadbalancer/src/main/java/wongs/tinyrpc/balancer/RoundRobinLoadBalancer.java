@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public class RoundLoadBalancer implements LoadBalancer {
+public class RoundRobinLoadBalancer implements LoadBalancer {
     private AtomicInteger choice = new AtomicInteger(0);
     @Getter
     private List<String> addresses = new CopyOnWriteArrayList<>();
@@ -48,5 +48,10 @@ public class RoundLoadBalancer implements LoadBalancer {
             this.addresses.remove(node);
             log.info("Node removed: {}", node);
         }
+    }
+
+    @Override
+    public String getName() {
+        return "RoundRobin";
     }
 }

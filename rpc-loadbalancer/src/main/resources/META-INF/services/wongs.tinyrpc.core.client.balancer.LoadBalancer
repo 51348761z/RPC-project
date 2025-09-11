@@ -1,0 +1,3 @@
+wongs.tinyrpc.balancer.RandomLoadBalancer
+wongs.tinyrpc.balancer.RoundRobinLoadBalancer
+wongs.tinyrpc.balancer.ConsistenctyHashBalancer
