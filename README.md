@@ -9,17 +9,27 @@ This project demonstrates core RPC concepts including service registration/disco
 ## Features
 
 - **Service Registration & Discovery**: ZooKeeper-based service management with real-time caching
-- **Load Balancing**: Multiple strategies (Consistent Hash, Random, Round Robin)
+- **Load Balancing**: Multiple strategies, pluggable via SPI
 - **Retry Mechanism**: Configurable RetryImpl with service whitelist support
 - **Circuit Breaker**: Service protection with CLOSED/OPEN/HALF_OPEN states
 - **Rate Limiting**: Token bucket algorithm for service request throttling
 - **Multiple Transport Protocols**: Netty and Socket implementations
-- **Custom Serialization**: JSON and Java object serialization support
+- **Custom Serialization**: Multiple serialization formats, pluggable via SPI
 - **Dynamic Proxy**: Transparent remote method calls
+- **Spring Integration**: Integrated with Spring Core for dependency injection
+- **Unified Logging**: Uses SLF4J for logging
 
 ## Version History
 
-### v4.0.0 (Latest)
+### v5.0.0 (Latest)
+- Implemented SPI for pluggable serializers and load balancers.
+- Integrated Spring Core for dependency injection.
+- Replaced `System.out` with SLF4J for unified logging.
+- Refactored project into a multi-module architecture.
+- Unified package structure and component naming.
+- Added more load balancing strategies (Random, Round Robin).
+
+### v4.0.0
 - Added circuit breaker pattern for RPC service protection
 - Implemented token bucket rate limiting for service throttling
 - Enhanced fault tolerance with configurable RetryImpl policies
@@ -60,8 +70,10 @@ This project demonstrates core RPC concepts including service registration/disco
 
 - **Client Proxy**: Dynamic proxy for transparent RPC calls
 - **Service Center**: ZooKeeper-based service discovery with caching
-- **Load Balancer**: Multiple algorithms for service selection
+- **Load Balancer**: Multiple algorithms for service selection, pluggable via SPI
 - **Retry Handler**: Fault tolerance with configurable RetryImpl policies
 - **Circuit Breaker**: Service protection against cascading failures
 - **Rate Limiter**: Request throttling with token bucket algorithm
-- **Serialization**: Pluggable JSON/Object serializers
+- **Serialization**: Pluggable serializers via SPI
+- **Spring Integration**: Dependency injection for easier extension
+- **Logging**: Unified logging with SLF4J
