@@ -1,9 +1,9 @@
 package wongs.tinyrpc.core.client.proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.client.breaker.CircuitBreaker;
 import wongs.tinyrpc.core.client.breaker.CircuitBreakerProvider;
 import wongs.tinyrpc.core.client.transport.RpcClient;
-//import Client.rpcClient.impl.NettyRpcClient;
 import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
 import wongs.tinyrpc.core.client.retry.RetryStrategy;
 import wongs.tinyrpc.common.model.RpcRequest;
@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+@Slf4j
 public class ClientProxy implements InvocationHandler {
     private RpcClient rpcClient;
     private ServiceDiscovery serviceDiscovery;
@@ -27,22 +28,22 @@ public class ClientProxy implements InvocationHandler {
     }
     public ClientProxy(RpcClient rpcClient) {
         this.rpcClient = rpcClient;
-        System.out.println("Proxy initialized using client: " + rpcClient.getClass().getName());
+        log.info("{}", "Proxy initialized using client: " + rpcClient.getClass().getName());
     }
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println("Invoking method: " + method.getName());
+        log.info("{}", "Invoking method: " + method.getName());
         RpcRequest request = RpcRequest.builder()
                 .interfaceName(method.getDeclaringClass().getName())
                 .methodName(method.getName())
                 .parameters(args)
                 .parameterTypes(method.getParameterTypes()).build();
-        System.out.println("Sending RPC request for method " + request.getMethodName());
+        log.info("{}", "Sending RPC request for method " + request.getMethodName());
 
         // Check if circuit breaker is open for the service
         CircuitBreaker circuitBreaker = circuitBreakerProvider.getCircuitBreaker(method.getName());
         if (!circuitBreaker.allowRequest()) {
-            System.out.println("Circuit breaker is open for method: " + method.getName());
+            log.info("{}", "Circuit breaker is open for method: " + method.getName());
             return null;
         }
 
@@ -52,7 +53,7 @@ public class ClientProxy implements InvocationHandler {
         } else {
             response = rpcClient.sendRequest(request);
         }
-        System.out.println("Received RPC response data: " + response.getData());
+        log.info("{}", "Received RPC response data: " + response.getData());
         return response.getData();
     }
     public <T>T getProxy(Class<T> clazz) {

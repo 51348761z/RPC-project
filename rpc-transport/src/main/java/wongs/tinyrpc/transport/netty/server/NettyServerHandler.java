@@ -1,5 +1,6 @@
 package wongs.tinyrpc.transport.netty.server;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.server.provider.ServiceProvider;
 import wongs.tinyrpc.core.server.ratelimit.RateLimit;
 import wongs.tinyrpc.common.model.RpcResponse;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@Slf4j
 @AllArgsConstructor
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     private ServiceProvider serviceProvider;
@@ -23,7 +25,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     }
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        log.error("An error occurred", cause);
         ctx.close();
     }
 
@@ -32,7 +34,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         // Check if the rate limit allows the request
         RateLimit rateLimit = serviceProvider.getRateLimitProvider().getRateLimit(interfaceName);
         if (!rateLimit.getToken()) {
-            System.out.println("Rate limit exceeded for interface: " + interfaceName);
+            log.info("{}", "Rate limit exceeded for interface: " + interfaceName);
             return RpcResponse.fail();
         }
 
@@ -43,8 +45,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
             Object invoke = method.invoke(service, rpcRequest.getParameters());
             return RpcResponse.success(invoke);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
-            exception.printStackTrace();
-            System.out.println("Method not found or access denied");
+            log.error("An error occurred", exception);
+            log.info("{}", "Method not found or access denied");
             return RpcResponse.fail();
         }
     }

@@ -1,11 +1,13 @@
 package wongs.tinyrpc.transport.serializer.Impl;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.common.protocol.MessageType;
 import wongs.tinyrpc.transport.serializer.Serializer;
 import wongs.tinyrpc.transport.serializer.SerializerType;
 
 import java.io.*;
 
+@Slf4j
 public class ObjectSerializer implements Serializer {
     @Override
     public byte[] serialize(Object object) {
@@ -19,7 +21,7 @@ public class ObjectSerializer implements Serializer {
             oos.close();
             bos.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("An error occurred", e);
         }
         return bytes;
     }
@@ -34,7 +36,7 @@ public class ObjectSerializer implements Serializer {
             ois.close();
             bis.close();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error("An error occurred", e);
         }
         return object;
     }

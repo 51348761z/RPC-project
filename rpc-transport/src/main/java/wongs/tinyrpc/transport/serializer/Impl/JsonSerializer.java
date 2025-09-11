@@ -1,5 +1,6 @@
 package wongs.tinyrpc.transport.serializer.Impl;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.transport.serializer.Serializer;
 import wongs.tinyrpc.transport.serializer.SerializerType;
 import com.alibaba.fastjson.JSONObject;
@@ -7,6 +8,7 @@ import wongs.tinyrpc.common.protocol.MessageType;
 import wongs.tinyrpc.common.model.RpcResponse;
 import wongs.tinyrpc.common.model.RpcRequest;
 
+@Slf4j
 public class JsonSerializer implements Serializer {
     @Override
     public byte[] serialize(Object object) {
@@ -36,7 +38,7 @@ public class JsonSerializer implements Serializer {
                 RpcResponse response = JSONObject.parseObject(bytes, RpcResponse.class);
                 Class<?> dataType = response.getDataType();
                 if (dataType == null) {
-                    System.out.println("Data type is null, defaulting to Object");
+                    log.info("{}", "Data type is null, defaulting to Object");
                     dataType = Object.class; // Default to Object if no data type is specified
                 }
                 if (response.getData() != null && !dataType.isAssignableFrom(response.getData().getClass())) {
@@ -45,7 +47,7 @@ public class JsonSerializer implements Serializer {
                 object = response;
                 break;
             default:
-                System.out.println("Unknown message type: " + messageType);
+                log.info("{}", "Unknown message type: " + messageType);
                 throw new RuntimeException();
         }
         return object;

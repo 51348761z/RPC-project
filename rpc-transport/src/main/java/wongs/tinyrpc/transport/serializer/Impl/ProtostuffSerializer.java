@@ -3,7 +3,6 @@ package wongs.tinyrpc.transport.serializer.Impl;
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtobufIOUtil;
 import io.protostuff.Schema;
-import io.protostuff.runtime.RuntimePipeSchema;
 import io.protostuff.runtime.RuntimeSchema;
 import wongs.tinyrpc.common.model.RpcRequest;
 import wongs.tinyrpc.common.model.RpcResponse;

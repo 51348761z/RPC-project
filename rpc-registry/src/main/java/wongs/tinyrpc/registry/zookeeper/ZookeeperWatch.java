@@ -1,5 +1,6 @@
 package wongs.tinyrpc.registry.zookeeper;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.registry.cache.ServiceCache;
 import lombok.AllArgsConstructor;
 import org.apache.curator.framework.CuratorFramework;
@@ -7,6 +8,7 @@ import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.CuratorCache;
 import org.apache.curator.framework.recipes.cache.CuratorCacheListener;
 
+@Slf4j
 @AllArgsConstructor
 public class ZookeeperWatch {
     private CuratorFramework client;
@@ -21,24 +23,24 @@ public class ZookeeperWatch {
                     case "NODE_CREATED" -> {
                         String[] pathList = parsePath(data);
                         if (pathList.length <= 2) {
-                            System.out.println("Service created: " + data.getPath());
+                            log.info("{}", "Service created: " + data.getPath());
                         } else {
                             String serviceName = pathList[1];
                             String serviceAddress = pathList[2];
                             cache.addServiceToCache(serviceName, serviceAddress);
-                            System.out.println("Service added to cache: " + serviceName + " -> " + serviceAddress);
+                            log.info("{}", "Service added to cache: " + serviceName + " -> " + serviceAddress);
                         }
                     }
                     case "NODE_CHANGED" -> {
                         if (oldData.getData() != null) {
-                            System.out.println("cache data before change: " + new String(oldData.getData()));
+                            log.info("{}", "cache data before change: " + new String(oldData.getData()));
                         } else {
-                            System.out.println("first time change, no old data");
+                            log.info("{}", "first time change, no old data");
                         }
                         String[] oldPathList = parsePath(oldData);
                         String[] PathList = parsePath(data);
                         cache.replaceServiceAddress(oldPathList[1], oldPathList[2], PathList[2]);
-                        System.out.println("Service address changed: " + oldPathList[1] + " from " + oldPathList[2] + " to " + PathList[2]);
+                        log.info("{}", "Service address changed: " + oldPathList[1] + " from " + oldPathList[2] + " to " + PathList[2]);
                     }
                     case "NODE_DELETED" -> {
                         String[] pathList = parsePath(oldData);
@@ -49,7 +51,7 @@ public class ZookeeperWatch {
                         }
                     }
                     default -> {
-                        System.out.println("Unhandled event type: " + type.name());
+                        log.info("{}", "Unhandled event type: " + type.name());
                     }
                 }
             }

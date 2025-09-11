@@ -1,11 +1,13 @@
 package wongs.tinyrpc.example.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import wongs.tinyrpc.example.config.RpcFramworkConfig;
 import wongs.tinyrpc.core.client.proxy.ClientProxy;
 import wongs.tinyrpc.common.dto.User;
 import wongs.tinyrpc.common.service.UserService;
 
+@Slf4j
 public class TestClient {
     public static void main(String[] args) throws InterruptedException {
 
@@ -22,17 +24,17 @@ public class TestClient {
             new Thread(()->{
                 try {
                     User user = proxy.getUserById(userId);
-                    System.out.println("User ID: " + userId + ", User: " + user + " from thread: " + Thread.currentThread().getName());
+                    log.info("{}", "User ID: " + userId + ", User: " + user + " from thread: " + Thread.currentThread().getName());
                     Integer id = proxy.insertUserId(User.builder()
                             .id(userId)
                             .username("User" + userId.toString())
                             .sex(true)
                             .build());
-                    System.out.println("Inserted User ID: " + id + " from thread: " + Thread.currentThread().getName());
+                    log.info("{}", "Inserted User ID: " + id + " from thread: " + Thread.currentThread().getName());
                 } catch (NullPointerException e) {
-                    System.out.println("Service not available for User ID: " + userId + " from thread: " + Thread.currentThread().getName());
+                    log.info("{}", "Service not available for User ID: " + userId + " from thread: " + Thread.currentThread().getName());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("An error occurred", e);
                 }
             }).start();
         }

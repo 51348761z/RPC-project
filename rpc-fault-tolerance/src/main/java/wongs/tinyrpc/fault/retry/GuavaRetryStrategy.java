@@ -1,5 +1,6 @@
 package wongs.tinyrpc.fault.retry;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.client.retry.RetryStrategy;
 import wongs.tinyrpc.core.client.transport.RpcClient;
 import com.github.rholder.retry.*;
@@ -9,6 +10,7 @@ import wongs.tinyrpc.common.model.RpcResponse;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class GuavaRetryStrategy implements RetryStrategy {
     private RpcClient rpcClient;
 
@@ -23,7 +25,7 @@ public class GuavaRetryStrategy implements RetryStrategy {
                 .withRetryListener(new RetryListener() {
                     @Override
                     public <V> void onRetry(Attempt<V> attempt) {
-                        System.out.println("RetryListener: calling retry for attempt " + attempt.getAttemptNumber());
+                        log.info("{}", "RetryListener: calling retry for attempt " + attempt.getAttemptNumber());
 
                     }
                 })
@@ -31,14 +33,14 @@ public class GuavaRetryStrategy implements RetryStrategy {
         try {
             return retryer.call(() -> rpcClient.sendRequest(request));
         } catch (RetryException e) {
-            System.out.println("All retry attempts failed after 3 tries");
+            log.info("{}", "All retry attempts failed after 3 tries");
             if (e.getLastFailedAttempt().hasException()) {
                 e.getLastFailedAttempt().getExceptionCause().printStackTrace();
             }
         }
         catch (Exception e) {
-            System.out.println("Unexpected exception during retry: " + e.getMessage());
-            e.printStackTrace();
+            log.info("{}", "Unexpected exception during retry: " + e.getMessage());
+            log.error("An error occurred", e);
         }
         return RpcResponse.fail();
     }

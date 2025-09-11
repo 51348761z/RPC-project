@@ -1,5 +1,6 @@
 package wongs.tinyrpc.transport.socket;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.server.provider.ServiceProvider;
 import wongs.tinyrpc.common.model.RpcRequest;
 import wongs.tinyrpc.common.model.RpcResponse;
@@ -12,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 
+@Slf4j
 @AllArgsConstructor
 public class WorkThread implements Runnable {
     private Socket socket;
@@ -27,7 +29,7 @@ public class WorkThread implements Runnable {
             oos.writeObject(rpcResponse);
             oos.flush();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error("An error occurred", e);
         }
     }
     private RpcResponse getResponse(RpcRequest rpcRequest) {
@@ -39,8 +41,8 @@ public class WorkThread implements Runnable {
             Object invoke = method.invoke(service, rpcRequest.getParameters());
             return RpcResponse.success(invoke);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            System.out.println("Method not found or access denied");
+            log.error("An error occurred", e);
+            log.info("{}", "Method not found or access denied");
             return RpcResponse.fail();
         }
     }

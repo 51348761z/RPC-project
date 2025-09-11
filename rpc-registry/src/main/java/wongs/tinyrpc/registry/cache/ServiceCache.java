@@ -1,10 +1,13 @@
 package wongs.tinyrpc.registry.cache;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class ServiceCache {
     private static Map<String, List<String>> serviceCacheMap = new HashMap<>(); // Map to hold service names and their corresponding addresses
 
@@ -12,7 +15,7 @@ public class ServiceCache {
         if (serviceCacheMap.containsKey(serviceName)) {
             List<String> addresses = serviceCacheMap.get(serviceName);
             addresses.add(serviceAddress);
-            System.out.println("Service " + serviceName + " added to cache with address: " + serviceAddress);
+            log.info("{}", "Service " + serviceName + " added to cache with address: " + serviceAddress);
         } else {
             List<String> addresses = new ArrayList<>();
             addresses.add(serviceAddress);
@@ -27,10 +30,10 @@ public class ServiceCache {
                 addresses.remove(oldAddress);
                 addresses.add(newAddress);
             } else {
-                System.out.println("Old address not found for service " + serviceName + ": " + oldAddress);
+                log.info("{}", "Old address not found for service " + serviceName + ": " + oldAddress);
             }
         } else {
-            System.out.println("Service " + serviceName + " not found in cache.");
+            log.info("{}", "Service " + serviceName + " not found in cache.");
         }
     }
 
@@ -45,7 +48,7 @@ public class ServiceCache {
         if (serviceCacheMap.containsKey(serviceName)) {
             List<String> addresses = serviceCacheMap.get(serviceName);
             addresses.remove(serviceAddress);
-            System.out.println("Service " + serviceName + " removed from cache with address: " + serviceAddress);
+            log.info("{}", "Service " + serviceName + " removed from cache with address: " + serviceAddress);
         }
     }
 }

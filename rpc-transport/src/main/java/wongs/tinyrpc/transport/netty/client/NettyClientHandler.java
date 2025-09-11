@@ -1,10 +1,12 @@
 package wongs.tinyrpc.transport.netty.client;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.common.model.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 
+@Slf4j
 public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, RpcResponse response) throws Exception{
@@ -14,7 +16,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
     }
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        log.error("client caught exception", cause);
         ctx.close();
     }
 }

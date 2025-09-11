@@ -1,22 +1,23 @@
 package wongs.tinyrpc.transport.codec;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.common.protocol.MessageType;
 import wongs.tinyrpc.transport.serializer.Serializer;
-import wongs.tinyrpc.transport.serializer.SerializerType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.util.List;
 
+@Slf4j
 @AllArgsConstructor
 public class MyDecoder extends ByteToMessageDecoder {
     private static final int HARDER_LENGTH = 8;
     private Serializer serializer;
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        System.out.println("MyDecoder called......");
+        log.info("{}", "MyDecoder called......");
         if (in.readableBytes() < HARDER_LENGTH) {
             return;
         }
@@ -29,10 +30,6 @@ public class MyDecoder extends ByteToMessageDecoder {
             in.resetReaderIndex();
             return;
         }
-
-        // Read the serializer type and create the serializer
-//        short serializerType = in.readShort();
-//        Serializer serializer = this.createSerializer(serializerType);
 
         // Read the length of the message
         int messageLength = in.readInt();

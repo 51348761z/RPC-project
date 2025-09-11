@@ -1,5 +1,6 @@
 package wongs.tinyrpc.transport.netty.client;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.client.transport.RpcClient;
 import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
 import wongs.tinyrpc.registry.zookeeper.ZookeeperServiceDiscovery;
@@ -17,6 +18,7 @@ import wongs.tinyrpc.transport.serializer.Serializer;
 
 import java.net.InetSocketAddress;
 
+@Slf4j
 public class NettyRpcClient implements RpcClient {
     private final Bootstrap bootstrap;
     private static final EventLoopGroup eventLoopGroup;
@@ -37,7 +39,7 @@ public class NettyRpcClient implements RpcClient {
     }
     @Override
     public RpcResponse sendRequest(RpcRequest request) {
-        System.out.println("Sending RPC request: " + request + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("{}", "Sending RPC request: " + request + Thread.currentThread().getStackTrace()[2].getMethodName());
         // get the service address from the service center
         InetSocketAddress address = serviceDiscovery.serviceDiscovery(request.getInterfaceName());
         if (address == null) {
@@ -54,7 +56,7 @@ public class NettyRpcClient implements RpcClient {
             AttributeKey<RpcResponse> key = AttributeKey.valueOf("RPCResponse");
             RpcResponse response = channel.attr(key).get();
 
-            System.out.println(response);
+            log.info("{}", response);
             return response;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

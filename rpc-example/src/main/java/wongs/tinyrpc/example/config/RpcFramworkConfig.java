@@ -1,12 +1,10 @@
 package wongs.tinyrpc.example.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import wongs.tinyrpc.balancer.ConsistenctyHashBalancer;
-import wongs.tinyrpc.balancer.RandomLoadBalancer;
-import wongs.tinyrpc.balancer.RoundRobinLoadBalancer;
 import wongs.tinyrpc.core.client.balancer.LoadBalancer;
 import wongs.tinyrpc.core.client.breaker.CircuitBreakerProvider;
 import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
@@ -29,6 +27,7 @@ import wongs.tinyrpc.transport.socket.SimpleRPCServer;
 
 import java.util.ServiceLoader;
 
+@Slf4j
 @Configuration
 @PropertySource("classpath:application.properties")
 public class RpcFramworkConfig {
@@ -61,7 +60,7 @@ public class RpcFramworkConfig {
         for (LoadBalancer balancer : loader) {
             String balancerName = balancer.getName().toLowerCase();
             if (balancerName.equals(userChoice)) {
-                System.out.println("SPI: Using load balancer: " + userChoice);
+                log.info("{}", "SPI: Using load balancer: " + userChoice);
                 return balancer;
             }
         }
@@ -122,7 +121,7 @@ public class RpcFramworkConfig {
         for (Serializer serializer : loader) {
             String serializerName = serializer.getType().name().replace("_SERIALIZER", "").toLowerCase();
             if (serializerName.equals(userChoice)) {
-                System.out.println("SPI: Using serializer: " + userChoice);
+                log.info("{}", "SPI: Using serializer: " + userChoice);
                 return serializer;
             }
         }

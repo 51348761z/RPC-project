@@ -1,5 +1,6 @@
 package wongs.tinyrpc.registry.zookeeper;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.server.registry.ServiceRegistry;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -9,6 +10,7 @@ import org.apache.zookeeper.CreateMode;
 
 import java.net.InetSocketAddress;
 
+@Slf4j
 public class ZookeeperServiceRegistry implements ServiceRegistry {
     private CuratorFramework client;
     private static final String ROOT_PATH = "MyRpc";
@@ -23,7 +25,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistry {
                 .namespace(ROOT_PATH)
                 .build();
         this.client.start();
-        System.out.println("Successfully connected to Zookeeper!");
+        log.info("{}", "Successfully connected to Zookeeper!");
     }
 
     @Override
@@ -38,9 +40,9 @@ public class ZookeeperServiceRegistry implements ServiceRegistry {
                 path = "/" + RETRY + "/" + serviceName;
                 client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path);
             }
-            System.out.println("Successfully register service " + serviceName);
+            log.info("{}", "Successfully register service " + serviceName);
         } catch (Exception e) {
-            System.out.println("This service is already register!");
+            log.info("{}", "This service is already register!");
         }
     }
 

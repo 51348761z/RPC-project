@@ -4,9 +4,12 @@ import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.client.breaker.CircuitBreaker;
 import wongs.tinyrpc.core.client.breaker.CircuitBreakerProvider;
 
+@Slf4j
 public class CircuitBreakerProviderImpl implements CircuitBreakerProvider {
 
     @Data
@@ -27,7 +30,7 @@ public class CircuitBreakerProviderImpl implements CircuitBreakerProvider {
         if (circuitBreakerMap.containsKey(serviceName)) {
             circuitBreaker = circuitBreakerMap.get(serviceName);
         } else {
-            System.out.println("Creating new CircuitBreaker for service: " + serviceName);
+            log.info("{}", "Creating new CircuitBreaker for service: " + serviceName);
             circuitBreaker = new CircuitBreakerImpl(config.failureThreshold, config.successRate, config.resetPeriodMS);
             circuitBreakerMap.put(serviceName, circuitBreaker);
         }

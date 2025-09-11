@@ -1,15 +1,17 @@
 package wongs.tinyrpc.example.service;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.common.dto.User;
 import wongs.tinyrpc.common.service.UserService;
 
 import java.util.Random;
 import java.util.UUID;
 
+@Slf4j
 public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer id) {
-        System.out.println("Client called getUserById with ID: " + id);
+        log.info("{}", "Client called getUserById with ID: " + id);
         // mimic the action of getting user from datastore
         Random random = new Random();
         // UUID.randomUUID() generates a random UUID which is globally unique
@@ -23,7 +25,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public Integer insertUserId(User user) {
-        System.out.println("Client called insertUserId with user: " + user.getUsername());
+        log.info("{}", "Client called insertUserId with user: " + user.getUsername());
         return user.getId();
     }
 }

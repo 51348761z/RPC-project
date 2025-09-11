@@ -1,5 +1,6 @@
 package wongs.tinyrpc.transport.socket;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.client.transport.RpcClient;
 import wongs.tinyrpc.common.model.RpcRequest;
 import wongs.tinyrpc.common.model.RpcResponse;
@@ -10,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+@Slf4j
 @AllArgsConstructor
 public class SimpleSocketRpcClient implements RpcClient {
     private String host;
@@ -27,7 +29,7 @@ public class SimpleSocketRpcClient implements RpcClient {
             RpcResponse response = (RpcResponse) ois.readObject();
             return response;
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error("An error occurred", e);
             return null;
         }
     }

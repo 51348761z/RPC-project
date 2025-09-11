@@ -19,12 +19,12 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
     public void initBalancer(List<String> serverList) {
         for (String server : serverList) {
             realNodes.add(server);
-            System.out.println("Adding real node: " + server);
+            log.info("{}", "Adding real node: " + server);
             for (int i = 0; i < VIRTUAL_NODES; i++) {
                 String virtualNode = server + "&&VN" + i;
                 int hash = getHash(virtualNode);
                 hashRing.put(hash, virtualNode);
-                System.out.println("Adding virtual node: " + virtualNode + " with hash: " + hash);
+                log.info("{}", "Adding virtual node: " + virtualNode + " with hash: " + hash);
             }
         }
     }
@@ -68,12 +68,12 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
     public void addNode(String node) {
         if (!realNodes.contains(node)) {
             realNodes.add(node);
-            System.out.println("Adding new real node: " + node);
+            log.info("{}", "Adding new real node: " + node);
             for (int i = 0; i < VIRTUAL_NODES; i++) {
                 String virtualNode = node + "&&VN" + i;
                 int hash = getHash(virtualNode);
                 hashRing.put(hash, virtualNode);
-                System.out.println("Adding new virtual node: " + virtualNode + " with hash: " + hash);
+                log.info("{}", "Adding new virtual node: " + virtualNode + " with hash: " + hash);
             }
         }
     }
@@ -82,15 +82,15 @@ public class ConsistenctyHashBalancer implements LoadBalancer {
     public void delNode(String node) {
         if (realNodes.contains(node)) {
             realNodes.remove(node);
-            System.out.println("Removing real node: " + node);
+            log.info("{}", "Removing real node: " + node);
             for (int i = 0; i < VIRTUAL_NODES; i++) {
                 String virtualNode = node + "&&VN" + i;
                 int hash = getHash(virtualNode);
                 if (hashRing.containsKey(hash)) {
                     hashRing.remove(hash);
-                    System.out.println("Removing virtual node: " + virtualNode + " with hash: " + hash);
+                    log.info("{}", "Removing virtual node: " + virtualNode + " with hash: " + hash);
                 } else {
-                    System.out.println("Virtual node: " + virtualNode + " with hash: " + hash + " does not exist, cannot remove.");
+                    log.info("{}", "Virtual node: " + virtualNode + " with hash: " + hash + " does not exist, cannot remove.");
                 }
             }
         }

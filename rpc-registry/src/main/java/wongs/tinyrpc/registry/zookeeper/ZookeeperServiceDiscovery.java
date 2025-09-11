@@ -1,9 +1,9 @@
 package wongs.tinyrpc.registry.zookeeper;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.balancer.RandomLoadBalancer;
 import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
 import wongs.tinyrpc.registry.cache.ServiceCache;
-import wongs.tinyrpc.balancer.ConsistenctyHashBalancer;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -12,6 +12,7 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import java.net.InetSocketAddress;
 import java.util.List;
 
+@Slf4j
 public class ZookeeperServiceDiscovery implements ServiceDiscovery {
     private CuratorFramework client;
     private static final String ROOT_PATH = "MyRpc";
@@ -27,7 +28,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery {
                 .namespace(ROOT_PATH)
                 .build();
         this.client.start();
-        System.out.println("Successfully connected to zookeeper!");
+        log.info("{}", "Successfully connected to zookeeper!");
 
         // Initialize the service cache
         this.serviceCache = new ServiceCache();
@@ -44,14 +45,14 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery {
                 serviceAddresses = client.getChildren().forPath("/" + serviceName);
             }
             if (serviceAddresses.isEmpty()) {
-                System.out.println("No service found for: " + serviceName);
+                log.info("{}", "No service found for: " + serviceName);
                 return null;
             }
             String address = new RandomLoadBalancer().balanceStrategy(serviceAddresses);
             return parseAddress(address);
         } catch (Exception e) {
-            System.out.println("Error during service discovery for: " + serviceName);
-            e.printStackTrace();
+            log.info("{}", "Error during service discovery for: " + serviceName);
+            log.error("An error occurred", e);
         }
         return null;
     }
@@ -63,12 +64,12 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery {
             List<String> serviceList = client.getChildren().forPath("/" + RETRY);
             for (String service : serviceList) {
                 if (service.equals(serviceName)) {
-                    System.out.println("Service " + serviceName + " is marked for retry whitelist, proceeding with retry.");
+                    log.info("{}", "Service " + serviceName + " is marked for retry whitelist, proceeding with retry.");
                     canRetry = true;
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("An error occurred", e);
         }
         return canRetry;
     }

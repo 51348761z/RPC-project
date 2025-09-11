@@ -1,5 +1,6 @@
 package wongs.tinyrpc.transport.socket;
 
+import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.server.provider.ServiceProvider;
 import wongs.tinyrpc.core.server.transport.RpcServer;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+@Slf4j
 @AllArgsConstructor
 public class SimpleRPCServer implements RpcServer {
     private ServiceProvider serviceProvider;
@@ -15,17 +17,17 @@ public class SimpleRPCServer implements RpcServer {
     public void start(int port) {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
-            System.out.println("Server started on port " + port + "......");
+            log.info("{}", "Server started on port " + port + "......");
             while (true) {
                 Socket socket = serverSocket.accept();
                 new Thread(new WorkThread(socket, serviceProvider)).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("An error occurred", e);
         }
     }
     @Override
     public void stop() {
-        System.out.println("Server stopped......");
+        log.info("{}", "Server stopped......");
     }
 }

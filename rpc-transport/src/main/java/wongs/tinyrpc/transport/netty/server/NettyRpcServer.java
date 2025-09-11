@@ -17,7 +17,7 @@ public class NettyRpcServer implements RpcServer {
     public NettyRpcServer(ServiceProvider serviceProvider, Serializer serializer) {
         this.serviceProvider = serviceProvider;
         this.serializer = serializer;
-        System.out.println("NettyRpcServer initialized with serializer: " + serializer.getClass().getName());
+        log.info("{}", "NettyRpcServer initialized with serializer: " + serializer.getClass().getName());
     }
 
     @Override
