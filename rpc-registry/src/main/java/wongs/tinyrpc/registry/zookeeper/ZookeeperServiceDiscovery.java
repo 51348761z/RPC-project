@@ -1,5 +1,6 @@
 package wongs.tinyrpc.registry.zookeeper;
 
+import wongs.tinyrpc.balancer.RandomLoadBalancer;
 import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
 import wongs.tinyrpc.registry.cache.ServiceCache;
 import wongs.tinyrpc.balancer.ConsistenctyHashBalancer;
@@ -46,7 +47,7 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery {
                 System.out.println("No service found for: " + serviceName);
                 return null;
             }
-            String address = new ConsistenctyHashBalancer().balanceStrategy(serviceAddresses);
+            String address = new RandomLoadBalancer().balanceStrategy(serviceAddresses);
             return parseAddress(address);
         } catch (Exception e) {
             System.out.println("Error during service discovery for: " + serviceName);
