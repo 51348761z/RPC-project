@@ -16,7 +16,7 @@ public class MyEncoder extends MessageToByteEncoder {
     private Serializer serializer;
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
-        log.info("{}", "MyEncoder encode method called" + msg.getClass().getName());
+//        log.info("{}", "MyEncoder encode method called" + msg.getClass().getName());
         if (msg instanceof RpcRequest) {
             out.writeShort(MessageType.RPC_REQUEST.getCode());
         } else if (msg instanceof RpcResponse) {

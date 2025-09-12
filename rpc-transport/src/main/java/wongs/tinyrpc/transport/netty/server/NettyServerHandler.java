@@ -8,9 +8,11 @@ import wongs.tinyrpc.common.model.RpcRequest;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;
+import wongs.tinyrpc.core.trace.TraceIdUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 @Slf4j
 @AllArgsConstructor
@@ -19,9 +21,22 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
-        RpcResponse response = getResponse(request);
-        ctx.writeAndFlush(response);
-        ctx.close();
+        Map<String, String> attachments = request.getAttachments();
+        if (attachments != null) {
+            String traceId = attachments.get(TraceIdUtil.TRACE_ID);
+            String spanId = attachments.get(TraceIdUtil.SPAN_ID);
+            if (traceId != null) {
+                TraceIdUtil.setTraceId(traceId);
+                TraceIdUtil.setSpanId(spanId);
+            }
+        }
+       try {
+           RpcResponse response = getResponse(request);
+           ctx.writeAndFlush(response);
+           ctx.close();
+       } finally {
+           TraceIdUtil.clear();
+       }
     }
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

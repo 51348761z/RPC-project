@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-    <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-        </Console>
-    </Appenders>
+<Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+        <PatternLayout
+                pattern="%d{HH:mm:ss.SSS} %highlight{[%-5level]}{STYLE=Logback} [%X{traceId},%X{spanId}] [%15.15t] %cyan{%-40.40c{1.}} : %msg%n"
+                disableAnsi="false"/>
+    </Console>
 
-    <Loggers>
-        <Root level="info">
-            <AppenderRef ref="Console"/>
-        </Root>
-    </Loggers>
+    <RollingFile name="RollingFile"
+                 fileName="./logs/rpc-app.log"
+                 filePattern="./logs/rpc-app-%d{yyyy-MM-dd}-%i.log.gz">
+        <PatternLayout>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId},%X{spanId}] [%t] %-5level %logger{36} - %msg%n</Pattern>
+        </PatternLayout>
+        <Policies>
+            <TimeBasedTriggeringPolicy />
+            <SizeBasedTriggeringPolicy size="25 MB"/>
+        </Policies>
+        <DefaultRolloverStrategy max="20"/>
+    </RollingFile>
+</Appenders>
+
+<Loggers>
+    <Root level="info">
+        <AppenderRef ref="Console"/>
+    </Root>
+</Loggers>
 </Configuration>

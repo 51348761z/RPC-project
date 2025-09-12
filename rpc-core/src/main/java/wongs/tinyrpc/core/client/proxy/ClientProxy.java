@@ -8,10 +8,13 @@ import wongs.tinyrpc.core.client.discovery.ServiceDiscovery;
 import wongs.tinyrpc.core.client.retry.RetryStrategy;
 import wongs.tinyrpc.common.model.RpcRequest;
 import wongs.tinyrpc.common.model.RpcResponse;
+import wongs.tinyrpc.core.trace.TraceIdUtil;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class ClientProxy implements InvocationHandler {
@@ -32,12 +35,26 @@ public class ClientProxy implements InvocationHandler {
     }
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        log.info("{}", "Invoking method: " + method.getName());
+        String traceId = TraceIdUtil.getTraceId();
+        if (traceId == null) { // If no traceId exists, generate a new one
+            traceId = TraceIdUtil.getTraceId();
+            TraceIdUtil.setTraceId(traceId);
+        }
+        String spanId = TraceIdUtil.getNextId(); // Generate a new spanId for this method call
+        TraceIdUtil.setSpanId(spanId);
+
         RpcRequest request = RpcRequest.builder()
                 .interfaceName(method.getDeclaringClass().getName())
                 .methodName(method.getName())
                 .parameters(args)
-                .parameterTypes(method.getParameterTypes()).build();
+                .parameterTypes(method.getParameterTypes())
+                .build();
+
+        // Attach traceId and spanId to the request
+        Map<String, String> attachments = new HashMap<>();
+        attachments.put(TraceIdUtil.TRACE_ID, traceId);
+        attachments.put(TraceIdUtil.SPAN_ID, spanId);
+        request.setAttachments(attachments);
         log.info("{}", "Sending RPC request for method " + request.getMethodName());
 
         // Check if circuit breaker is open for the service
@@ -48,10 +65,14 @@ public class ClientProxy implements InvocationHandler {
         }
 
         RpcResponse response;
-        if (serviceDiscovery.checkRetry(request.getInterfaceName())) {
-            response = retryStrategy.execute(request, rpcClient);
-        } else {
-            response = rpcClient.sendRequest(request);
+        try {
+            if (serviceDiscovery.checkRetry(request.getInterfaceName())) {
+                response = retryStrategy.execute(request, rpcClient);
+            } else {
+                response = rpcClient.sendRequest(request);
+            }
+        } finally {
+            TraceIdUtil.clear();
         }
         log.info("{}", "Received RPC response data: " + response.getData());
         return response.getData();

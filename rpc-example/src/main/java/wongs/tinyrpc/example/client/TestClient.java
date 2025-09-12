@@ -2,6 +2,7 @@ package wongs.tinyrpc.example.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import wongs.tinyrpc.core.client.transport.RpcClient;
 import wongs.tinyrpc.example.config.RpcFramworkConfig;
 import wongs.tinyrpc.core.client.proxy.ClientProxy;
 import wongs.tinyrpc.common.dto.User;
@@ -13,7 +14,7 @@ public class TestClient {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(RpcFramworkConfig.class);
         ClientProxy clientProxy = context.getBean(ClientProxy.class);
-
+        RpcClient rpcClient = context.getBean(RpcClient.class);
         UserService proxy = clientProxy.getProxy(UserService.class);
 
         for (int i = 0; i < 120; i++) {
@@ -38,5 +39,10 @@ public class TestClient {
                 }
             }).start();
         }
+        log.info("Main thread is waiting for client threads to finish...");
+        Thread.sleep(15000);
+        rpcClient.close();
+        context.close();
+        log.info("Client application has exited.");
     }
 }

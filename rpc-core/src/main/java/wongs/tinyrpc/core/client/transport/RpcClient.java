@@ -5,4 +5,6 @@ import wongs.tinyrpc.common.model.RpcResponse;
 
 public interface RpcClient {
     RpcResponse sendRequest(RpcRequest request);
+
+    void close();
 }

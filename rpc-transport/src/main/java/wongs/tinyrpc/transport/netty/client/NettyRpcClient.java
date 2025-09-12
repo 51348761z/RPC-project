@@ -63,4 +63,10 @@ public class NettyRpcClient implements RpcClient {
             throw new RuntimeException("Failed to send request: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    public void close() {
+        eventLoopGroup.shutdownGracefully();
+        log.info("NettyRpcClient eventLoopGroup shut down.");
+    }
 }

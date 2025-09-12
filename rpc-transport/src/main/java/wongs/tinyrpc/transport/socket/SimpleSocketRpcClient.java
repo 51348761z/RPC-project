@@ -33,4 +33,9 @@ public class SimpleSocketRpcClient implements RpcClient {
             return null;
         }
     }
+
+    @Override
+    public void close() {
+        // No persistent connection to close in this simple implementation
+    }
 }
