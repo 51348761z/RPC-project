@@ -1,29 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-<Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-        <PatternLayout
-                pattern="%d{HH:mm:ss.SSS} %highlight{[%-5level]}{STYLE=Logback} [%X{traceId},%X{spanId}] [%15.15t] %cyan{%-40.40c{1.}} : %msg%n"
-                disableAnsi="false"/>
-    </Console>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%d{HH:mm:ss.SSS} %highlight{[%-5level]}{STYLE=Logback} [%X{traceId},%X{spanId}] [%15.15t] %cyan{%-40.40c{1.}} : %msg%n"
+                    disableAnsi="false"/>
+        </Console>
 
-    <RollingFile name="RollingFile"
-                 fileName="./logs/rpc-app.log"
-                 filePattern="./logs/rpc-app-%d{yyyy-MM-dd}-%i.log.gz">
-        <PatternLayout>
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId},%X{spanId}] [%t] %-5level %logger{36} - %msg%n</Pattern>
-        </PatternLayout>
-        <Policies>
-            <TimeBasedTriggeringPolicy />
-            <SizeBasedTriggeringPolicy size="25 MB"/>
-        </Policies>
-        <DefaultRolloverStrategy max="20"/>
-    </RollingFile>
-</Appenders>
+        <RollingFile name="RollingFile"
+                     fileName="./logs/app-current.log"
+                     filePattern="./logs/archive/app-%d{yyyy-MM-dd_HH-mm-ss}-%i.log.gz"
+                     immediateFlush="true">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId},%X{spanId}] [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy minSize="0"/>
+                <SizeBasedTriggeringPolicy size="25 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="./logs/archive" maxDepth="1">
+                    <IfFileName glob="app-*.log.gz" />
+                    <IfLastModified age="0s">
+                        <IfAccumulatedFileCount exceeds="20" />
+                    </IfLastModified>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
 
-<Loggers>
-    <Root level="info">
-        <AppenderRef ref="Console"/>
-    </Root>
-</Loggers>
+    <Loggers>
+        <Logger name="io.opentelemetry" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
 </Configuration>
