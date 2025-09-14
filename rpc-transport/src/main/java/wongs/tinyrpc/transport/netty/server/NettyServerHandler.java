@@ -24,15 +24,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
-        Map<String, String> attachments = request.getAttachments();
-        if (attachments != null) {
-            String traceId = attachments.get(TraceIdUtil.TRACE_ID);
-            String spanId = attachments.get(TraceIdUtil.SPAN_ID);
-            if (traceId != null) {
-                TraceIdUtil.setTraceId(traceId);
-                TraceIdUtil.setSpanId(spanId);
-            }
-        }
         Span span = tracer.spanBuilder(request.getInterfaceName()).startSpan();
        try {
            span.addEvent("Server received request for " + request.getMethodName());
@@ -42,9 +33,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
            span.addEvent("Server sent response for " + request.getMethodName());
        } finally {
            span.end();
-           TraceIdUtil.clear();
        }
     }
+
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.error("An error occurred", cause);
