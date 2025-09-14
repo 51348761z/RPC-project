@@ -1,5 +1,6 @@
 package wongs.tinyrpc.transport.netty.server;
 
+import io.opentelemetry.api.trace.Tracer;
 import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.server.provider.ServiceProvider;
 import wongs.tinyrpc.core.server.transport.RpcServer;
@@ -14,10 +15,12 @@ public class NettyRpcServer implements RpcServer {
     private ServiceProvider serviceProvider;
     private ChannelFuture channelFuture;
     private Serializer serializer;
-    public NettyRpcServer(ServiceProvider serviceProvider, Serializer serializer) {
+    private Tracer tracer;
+    public NettyRpcServer(ServiceProvider serviceProvider, Serializer serializer, Tracer tracer) {
         this.serviceProvider = serviceProvider;
         this.serializer = serializer;
-        log.info("{}", "NettyRpcServer initialized with serializer: " + serializer.getClass().getName());
+        this.tracer = tracer;
+        log.info("{}", "NettyRpcServer initialized on " + serviceProvider.getHost() + ":" + serviceProvider.getPort());
     }
 
     @Override
@@ -26,7 +29,7 @@ public class NettyRpcServer implements RpcServer {
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-            serverBootstrap.group(bossGroup, workGroup).channel(NioServerSocketChannel.class).childHandler(new NettyServerInitializer(serviceProvider, serializer));
+            serverBootstrap.group(bossGroup, workGroup).channel(NioServerSocketChannel.class).childHandler(new NettyServerInitializer(serviceProvider, serializer, tracer));
             channelFuture = serverBootstrap.bind(port).sync();
             log.info("RPC server binded on port {}", port);
             channelFuture.channel().closeFuture().sync();

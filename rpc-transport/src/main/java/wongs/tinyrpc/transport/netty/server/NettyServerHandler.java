@@ -1,5 +1,7 @@
 package wongs.tinyrpc.transport.netty.server;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.server.provider.ServiceProvider;
 import wongs.tinyrpc.core.server.ratelimit.RateLimit;
@@ -18,6 +20,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     private ServiceProvider serviceProvider;
+    private Tracer tracer;
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
@@ -30,11 +33,15 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
                 TraceIdUtil.setSpanId(spanId);
             }
         }
+        Span span = tracer.spanBuilder(request.getInterfaceName()).startSpan();
        try {
+           span.addEvent("Server received request for " + request.getMethodName());
            RpcResponse response = getResponse(request);
            ctx.writeAndFlush(response);
            ctx.close();
+           span.addEvent("Server sent response for " + request.getMethodName());
        } finally {
+           span.end();
            TraceIdUtil.clear();
        }
     }

@@ -1,5 +1,7 @@
 package wongs.tinyrpc.core.client.proxy;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import lombok.extern.slf4j.Slf4j;
 import wongs.tinyrpc.core.client.breaker.CircuitBreaker;
 import wongs.tinyrpc.core.client.breaker.CircuitBreakerProvider;
@@ -22,12 +24,14 @@ public class ClientProxy implements InvocationHandler {
     private ServiceDiscovery serviceDiscovery;
     private CircuitBreakerProvider circuitBreakerProvider;
     private RetryStrategy retryStrategy;
+    private Tracer tracer;
 
-    public ClientProxy(RpcClient rpcClient, ServiceDiscovery serviceDiscovery, CircuitBreakerProvider circuitBreakerProvider, RetryStrategy retryStrategy) throws InterruptedException {
+    public ClientProxy(RpcClient rpcClient, ServiceDiscovery serviceDiscovery, CircuitBreakerProvider circuitBreakerProvider, RetryStrategy retryStrategy, Tracer tracer) throws InterruptedException {
         this.rpcClient = rpcClient;
         this.serviceDiscovery = serviceDiscovery;
         this.circuitBreakerProvider = circuitBreakerProvider;
         this.retryStrategy = retryStrategy;
+        this.tracer = tracer;
     }
     public ClientProxy(RpcClient rpcClient) {
         this.rpcClient = rpcClient;
@@ -65,13 +69,17 @@ public class ClientProxy implements InvocationHandler {
         }
 
         RpcResponse response;
+        Span span = tracer.spanBuilder(request.getInterfaceName()).startSpan();
         try {
+            span.addEvent("Request processing started.");
             if (serviceDiscovery.checkRetry(request.getInterfaceName())) {
                 response = retryStrategy.execute(request, rpcClient);
             } else {
                 response = rpcClient.sendRequest(request);
             }
+            span.addEvent("Request processing completed.");
         } finally {
+            span.end();
             TraceIdUtil.clear();
         }
         log.info("{}", "Received RPC response data: " + response.getData());

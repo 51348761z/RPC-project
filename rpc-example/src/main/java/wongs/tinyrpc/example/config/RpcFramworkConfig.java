@@ -1,5 +1,6 @@
 package wongs.tinyrpc.example.config;
 
+import io.opentelemetry.api.trace.Tracer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -83,8 +84,8 @@ public class RpcFramworkConfig {
     }
 
     @Bean
-    ClientProxy clientProxy(RpcClient rpcClient, ServiceDiscovery serviceDiscovery, CircuitBreakerProvider circuitBreakerProvider, RetryStrategy retryStrategy) throws InterruptedException {
-        return new ClientProxy(rpcClient, serviceDiscovery, circuitBreakerProvider, retryStrategy);
+    ClientProxy clientProxy(RpcClient rpcClient, ServiceDiscovery serviceDiscovery, CircuitBreakerProvider circuitBreakerProvider, RetryStrategy retryStrategy, Tracer tracer) throws InterruptedException {
+        return new ClientProxy(rpcClient, serviceDiscovery, circuitBreakerProvider, retryStrategy, tracer);
     }
 
     // server components configuration
@@ -104,9 +105,9 @@ public class RpcFramworkConfig {
     }
 
     @Bean
-    RpcServer rpcServer(ServiceProvider serviceProvider, Serializer serializer) {
+    RpcServer rpcServer(ServiceProvider serviceProvider, Serializer serializer, Tracer tracer) {
         return switch (serverType.toLowerCase()) {
-            case "netty" -> new NettyRpcServer(serviceProvider, serializer);
+            case "netty" -> new NettyRpcServer(serviceProvider, serializer, tracer);
             case "socket" -> new SimpleRPCServer(serviceProvider);
             default -> throw new IllegalArgumentException("Unsupported server type: " + serverType);
         };
